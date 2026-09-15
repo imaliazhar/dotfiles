@@ -17,6 +17,7 @@ All services run in Docker (via Colima), behind a Caddy reverse proxy, exposed t
 | FlareSolverr | --                                | Captcha solver for indexers      |
 | Cloudflared  | --                                | Cloudflare Tunnel connector      |
 | ntfy         | https://ntfy.biakino.com          | Battery push notifications       |
+| Apps         | https://app.biakino.com/<app>     | Self-hosted apps                 |
 | Caddy        | --                                | Reverse proxy                    |
 
 ## Architecture
@@ -57,6 +58,7 @@ Seerr (request) → Sonarr/Radarr (search & manage) → Prowlarr (indexers) → 
 | bazarr     | biakino.com | HTTP | caddy:80  |
 | qbt        | biakino.com | HTTP | caddy:80  |
 | ntfy       | biakino.com | HTTP | caddy:80  |
+| app        | biakino.com | HTTP | caddy:80  |
 
 Cloudflare handles HTTPS automatically — the tunnel to Caddy is HTTP since it's already encrypted.
 
@@ -215,3 +217,54 @@ sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder
 ```
 
 On iOS/Android, there is no hosts file — you would need a DNS app or a local DNS server (e.g. Pi-hole) for those devices.
+
+## Apps (app.biakino.com)
+
+Each app is served under its own path prefix: `https://app.biakino.com/<app-name>`.
+
+### Static apps
+
+Drop the files in `~/.config/jellyfin/sites/<app-name>/` on the server. No config change
+is needed — Caddy's `file_server` serves them from the `app.biakino.com` block.
+
+```bash
+rsync -av --delete <local-dir>/ ssh.biakino.com:.config/jellyfin/sites/<app-name>/
+```
+
+`sites/` is gitignored, so static app files live outside this repo.
+
+### Server-backed apps (Express, Hono, ...)
+
+Caddy passes the full path through rather than stripping the prefix, so the app mounts
+its own routes at `/<app-name>`:
+
+- Express: `app.use('/<app-name>', router)`
+- Hono: `new Hono().basePath('/<app-name>')`
+
+Add a service to `docker-compose.yml`. Use a named volume for SQLite — bind mounts pass
+through the Colima VM, where SQLite's file locking is unreliable:
+
+```yaml
+  <app-name>:
+    image: <image>
+    container_name: <app-name>
+    volumes:
+      - <app-name>_data:/data
+    restart: unless-stopped
+```
+
+Declare the volume at the bottom of the file:
+
+```yaml
+volumes:
+  <app-name>_data:
+```
+
+Then add a route to the `app.biakino.com` block in the `Caddyfile`. `handle` matches
+before the `file_server` fallback, so static and server-backed apps coexist:
+
+```
+	handle /<app-name>/* {
+		reverse_proxy <app-name>:3000
+	}
+```

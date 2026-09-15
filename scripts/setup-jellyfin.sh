@@ -86,6 +86,7 @@ setup_dirs() {
   run mkdir -p "$JELLYFIN_DIR/prowlarr"
   run mkdir -p "$JELLYFIN_DIR/caddy_data"
   run mkdir -p "$JELLYFIN_DIR/caddy_config"
+  run mkdir -p "$JELLYFIN_DIR/sites"
   run mkdir -p "$JELLYFIN_DIR/ntfy/cache"
   run mkdir -p "$JELLYFIN_DIR/ntfy/etc"
   run mkdir -p "$JELLYFIN_MEDIA_DIR/movies"

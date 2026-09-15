@@ -29,3 +29,8 @@ qbt.biakino.com:80 {
 ntfy.biakino.com:80 {
 	reverse_proxy ntfy:80
 }
+
+app.biakino.com:80 {
+	root * /srv/apps
+	file_server
+}
