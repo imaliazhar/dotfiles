@@ -1,7 +1,0 @@
-*
-!.gitignore
-!docker-compose.yml
-!Caddyfile
-!README.md
-!ntfy/
-!ntfy/**
