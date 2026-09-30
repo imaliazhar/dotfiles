@@ -194,7 +194,7 @@ local tmux = {
 		mods = "SUPER|SHIFT",
 		action = action.Multiple({
 			action.SendKey({ key = "`" }),
-			action.SendKey({ key = "n" }),
+			action.SendKey({ key = ">" }),
 		}),
 	},
 
@@ -203,7 +203,7 @@ local tmux = {
 		mods = "SUPER|SHIFT",
 		action = action.Multiple({
 			action.SendKey({ key = "`" }),
-			action.SendKey({ key = "p" }),
+			action.SendKey({ key = "<" }),
 		}),
 	},
 
@@ -262,6 +262,21 @@ local tmux = {
 	},
 }
 
+local function move_tab_clamped(delta)
+	return wezterm.action_callback(function(window, pane)
+		local tabs = window:mux_window():tabs_with_info()
+		for _, info in ipairs(tabs) do
+			if info.is_active then
+				local target = info.index + delta
+				if target >= 0 and target < #tabs then
+					window:perform_action(action.MoveTab(target), pane)
+				end
+				return
+			end
+		end
+	end)
+end
+
 local tmux_emulated = {
 	{
 		key = "g",
@@ -299,12 +314,12 @@ local tmux_emulated = {
 	{
 		key = "l",
 		mods = "SUPER|SHIFT",
-		action = action.ActivateTabRelative(1),
+		action = move_tab_clamped(1),
 	},
 	{
 		key = "h",
 		mods = "SUPER|SHIFT",
-		action = action.ActivateTabRelative(-1),
+		action = move_tab_clamped(-1),
 	},
 
 	{
