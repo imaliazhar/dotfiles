@@ -80,10 +80,18 @@ function select-tmux-session --description 'FZF-based tmux session picker'
 
         tmux new-session $tmux_args
 
-        # For project-based sessions, start with editor open
-        if test "$selected_session" != home
+        if test "$selected_session" = home
+            tmux rename-window -t $selected_session:1 claude
+            tmux send-keys -t $selected_session:1.1 claude Enter
+        else
             tmux send-keys -t $selected_session:1.1 $EDITOR Enter
+            tmux new-window -d -t $selected_session:2 -n claude
+            tmux send-keys -t $selected_session:2.1 claude Enter
         end
+    end
+
+    if tmux list-windows -t "=$selected_session" -F '#{window_index}' | string match -q 2
+        tmux select-window -t "=$selected_session:2"
     end
 
     if test -z "$TMUX"
