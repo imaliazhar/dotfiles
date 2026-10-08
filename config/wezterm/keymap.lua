@@ -243,6 +243,16 @@ local tmux = {
 		}),
 	},
 
+	-- Cmd+Shift+O -> tmux prefix + G: toggle the ghpr popup (tmux.conf).
+	{
+		key = "o",
+		mods = "SUPER|SHIFT",
+		action = action.Multiple({
+			action.SendKey({ key = "`" }),
+			action.SendKey({ key = "G" }),
+		}),
+	},
+
 	{
 		key = "j",
 		mods = "SUPER",

@@ -9,9 +9,12 @@ function select-tmux-session --description 'FZF-based tmux session picker'
     set active_status_list
 
     # Get a list of existing tmux sessions, sorted by last attached time.
-    for line in (tmux list-sessions -F '#{session_last_attached} #{session_name} #{pane_start_path}' | sort -nr)
+    for line in (tmux list-sessions -F '#{?session_last_attached,#{session_last_attached},0} #{session_name} #{pane_start_path}' | sort -nr)
         # @fish-lsp-disable-next-line 4004 
         echo $line | read -l _timestamp session_name session_dir
+        if string match -q '_*' -- $session_name
+            continue
+        end
         set -a session_names_list $session_name
         set -a session_dirs_list $session_dir
         set -a active_status_list true
