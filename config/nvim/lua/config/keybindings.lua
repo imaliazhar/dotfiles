@@ -3,6 +3,26 @@ vim.g.maplocalleader = "\\"
 
 local map = vim.keymap.set
 
+-- Keep cursor/window position after any yank.
+local pre_yank_view = {}
+local function save_pre_yank_view()
+	pre_yank_view[vim.api.nvim_get_current_win()] = vim.fn.winsaveview()
+end
+
+vim.api.nvim_create_autocmd({ "VimEnter", "BufEnter", "WinEnter", "CursorMoved" }, {
+	callback = save_pre_yank_view,
+})
+vim.api.nvim_create_autocmd("TextYankPost", {
+	callback = function()
+		if vim.v.event.operator == "y" then
+			local view = pre_yank_view[vim.api.nvim_get_current_win()]
+			if view then
+				vim.fn.winrestview(view)
+			end
+		end
+	end,
+})
+
 vim.keymap.set("n", "j", "gj", { noremap = true })
 vim.keymap.set("n", "k", "gk", { noremap = true })
 vim.keymap.set("v", "j", "gj", { noremap = true })
@@ -52,6 +72,37 @@ map("n", "m", "'", { desc = "Jump to mark" })
 map("n", "<leader>/", "gcl", { remap = true, desc = "Toggle comment (current line)" })
 map("v", "<leader>/", "gc", { remap = true, desc = "Toggle comment (selection)" })
 
+-- Pi @ai Annotations
+local AI_LINE = "@ai "
+local AI_START = "@ai:start "
+local AI_END = "@ai:end"
+
+local function start_insert_at_marker_end(row, marker)
+	vim.schedule(function()
+		vim.api.nvim_win_set_cursor(0, { row, math.max(#marker - 1, 0) })
+		vim.cmd("startinsert!")
+	end)
+end
+
+map("n", "<leader>ai", function()
+	local row = vim.api.nvim_win_get_cursor(0)[1]
+	vim.api.nvim_buf_set_lines(0, row - 1, row - 1, false, { AI_LINE })
+	start_insert_at_marker_end(row, AI_LINE)
+end, { desc = "Add @ai annotation before current line" })
+
+map("x", "<leader>ai", function()
+	local start_line = vim.fn.line("v")
+	local end_line = vim.fn.line(".")
+	if start_line > end_line then
+		start_line, end_line = end_line, start_line
+	end
+
+	vim.cmd("normal! \27")
+	vim.api.nvim_buf_set_lines(0, end_line, end_line, false, { AI_END })
+	vim.api.nvim_buf_set_lines(0, start_line - 1, start_line - 1, false, { AI_START })
+	start_insert_at_marker_end(start_line, AI_START)
+end, { desc = "Wrap selection with @ai range" })
+
 -- Clipboard Actions
 map({ "n", "v" }, "<leader>y", '"+y', { desc = "Yank to system clipboard" })
 map({ "n", "v" }, "<Leader>p", '"+p', { desc = "Paste from system clipboard after cursor" })
@@ -83,9 +134,14 @@ end, { desc = "Reload theme" })
 
 -- Copy Current File Info
 map("n", "<leader>cf", function()
-	local filename = vim.fn.expand("%:r")
+	local filename = vim.fn.expand("%:t:r")
 	vim.fn.setreg("+", filename)
 end, { desc = "Copy current file name", noremap = true, silent = true })
+
+map("n", "<leader>cF", function()
+	local filename = vim.fn.expand("%:t")
+	vim.fn.setreg("+", filename)
+end, { desc = "Copy current file name with extension", noremap = true, silent = true })
 
 map("n", "<leader>cp", function()
 	local filepath = vim.fn.expand("%")
@@ -116,6 +172,30 @@ map("n", "<leader>cL", function()
 	local line = vim.fn.line(".")
 	vim.fn.setreg("+", filepath .. ":" .. line)
 end, { desc = "Copy current file's absolute path with line number", noremap = true, silent = true })
+
+map("v", "<leader>cl", function()
+	local filepath = vim.fn.expand("%")
+	local home = vim.fn.expand("$HOME")
+	filepath = filepath:gsub("^" .. home, "~")
+	local start_line = vim.fn.line("v")
+	local end_line = vim.fn.line(".")
+	if start_line > end_line then
+		start_line, end_line = end_line, start_line
+	end
+	vim.fn.setreg("+", filepath .. ":" .. start_line .. "-" .. end_line)
+end, { desc = "Copy current file path with line range", noremap = true, silent = true })
+
+map("v", "<leader>cL", function()
+	local filepath = vim.fn.expand("%:p")
+	local home = vim.fn.expand("$HOME")
+	filepath = filepath:gsub("^" .. home, "~")
+	local start_line = vim.fn.line("v")
+	local end_line = vim.fn.line(".")
+	if start_line > end_line then
+		start_line, end_line = end_line, start_line
+	end
+	vim.fn.setreg("+", filepath .. ":" .. start_line .. "-" .. end_line)
+end, { desc = "Copy current file's absolute path with line range", noremap = true, silent = true })
 
 map("n", "<leader>cr", function()
 	local root = vim.fn.getcwd()
