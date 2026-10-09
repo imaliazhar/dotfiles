@@ -44,7 +44,6 @@ export PATH="/opt/homebrew/bin:$PATH"
 
 export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="$HOME/.emacs.d/bin:$PATH"
 
 
 ### ANDROID

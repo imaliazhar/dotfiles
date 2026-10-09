@@ -158,7 +158,6 @@ setup_dotfiles() {
   ensure_symlink "$DOTFILES/config" ~/.config
   ensure_symlink "$DOTFILES/bin" ~/.local/bin
   ensure_symlink "$DOTFILES/zsh/zshenv" ~/.zshenv
-  ensure_symlink "$DOTFILES/emacs/config.el" ~/.emacs
 
   log "Configuring Hammerspoon to use dotfiles config..."
   run defaults write org.hammerspoon.Hammerspoon MJConfigFile "~/.config/hammerspoon/init.lua"
