@@ -1,25 +1,145 @@
 {
-  "enabledPlugins": {
-    "typescript-lsp@claude-plugins-official": true,
-    "swift-lsp@claude-plugins-official": true,
-    "lua-lsp@claude-plugins-official": true,
-    "gopls-lsp@claude-plugins-official": true
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "model": "opus[1m]",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.local/bin/ghpr-claude-state waiting"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.local/bin/ghpr-claude-state working"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.local/bin/ghpr-claude-state working"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt|elicitation_dialog",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.local/bin/ghpr-claude-state permission"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.local/bin/ghpr-claude-state waiting"
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.local/bin/ghpr-claude-state waiting"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.local/bin/ghpr-claude-state ended"
+          }
+        ]
+      }
+    ]
   },
   "statusLine": {
     "type": "command",
     "command": "sh ~/.claude/statusline-command.sh"
   },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cat | ~/Dotfiles/scripts/claude-recent-files.sh"
-          }
-        ]
+  "enabledPlugins": {
+    "typescript-lsp@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": true,
+    "lua-lsp@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": true,
+    "atlassian@claude-plugins-official": true,
+    "typesafe@typesafe-ai": true
+  },
+  "extraKnownMarketplaces": {
+    "typesafe-ai": {
+      "source": {
+        "source": "github",
+        "repo": "typesafe-ai/skills"
       }
+    }
+  },
+  "effortLevel": "xhigh",
+  "tui": "default",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
+  "theme": "dark",
+  "verbose": true,
+  "switchModelsOnFlag": false,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "autoMode": {
+    "soft_deny": [
+      "$defaults",
+      "Bash(kubectl:* -n prod-be)",
+      "Bash(kubectl:* -n prod-nl)"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: Omio (goeuro GitHub org)",
+      "**Cloud provider(s)**: GCP (eu.gcr.io container registry)",
+      "**Repository visibility**: private (goeuro/app — confirmed via gh)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: master (default); protected: master, release_aissr, release_uc-sdk-update, and numerous release_* branches (100+, via rulesets `Master` and `Release`, both active)",
+      "**CI/CD deploy targets**: eu.gcr.io (container registry); ops/values/prod-be.yaml and ops/values/prod-nl.yaml indicate prod-be and prod-nl deploy namespaces",
+      "**Network posture**: None configured",
+      "**Source control**: goeuro/app (https://github.com/goeuro/app.git) and its remote(s) only",
+      "**Trusted internal domains**: goeuro.atlassian.net (referenced in README for internal docs)",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: npm.pkg.github.com (GitHub Package Registry, per README and config scan)",
+      "**Sensitive data locations & audiences**: .env, .env.local, packages/tracking-provider/.env, packages/booking-components/.env, tools/expo/fastlane/app_store_connect_api_key.json — credentials/secrets, not to be committed or shared outside the repo's own maintainers",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or segment (e.g. ops/values/prod-be.yaml, ops/values/prod-nl.yaml, tools/devtools/scripts/verify-no-prod-leak.sh)",
+      "**Protected deployment namespaces / environments**: prod-be, prod-nl (per ops/values/prod-*.yaml)",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development (React Native / web app frontend at Omio)",
+      "**Trusted repo**: goeuro/app (https://github.com/goeuro/app.git), the working directory of this session — private repo, so confidential business material is fine to commit here but secrets/credentials are never cleared by visibility",
+      "**Org-specific CLIs**: yarn (e.g. yarn trigger-review, yarn prepare) — Omio-specific workflow tooling",
+      "No \"routine under <user>/ prefix\" qualifiers found"
     ]
-  }
+  },
+  "voiceEnabled": true
 }
