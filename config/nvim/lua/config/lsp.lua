@@ -5,6 +5,16 @@ vim.lsp.enable("lua_ls")
 -- vim.lsp.enable("fish_ls")
 vim.lsp.enable("bashls")
 
+-- Python
+vim.lsp.enable("ty")
+vim.lsp.enable("ruff")
+
+-- Rust
+vim.lsp.enable("rust_analyzer")
+
+-- Swift
+vim.lsp.enable("sourcekit-lsp")
+
 local function configure_diagnistics()
 	vim.diagnostic.config({
 		severity_sort = true,
@@ -66,8 +76,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
 
 		-- Navigation (not in defaults)
-		vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = ev.buf, desc = "Go to Definition" })
-		vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = ev.buf, desc = "Go to Declaration" })
+		vim.keymap.set("n", "gi", vim.lsp.buf.definition, { buffer = ev.buf, desc = "Go to Definition" })
+		vim.keymap.set("n", "gI", vim.lsp.buf.declaration, { buffer = ev.buf, desc = "Go to Declaration" })
 
 		-- Override grr to include symbol name in quickfix title
 		vim.keymap.set("n", "grr", function()
@@ -95,7 +105,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 		-- vtsls-specific
 		if client.name == "vtsls" then
-			vim.keymap.set("n", "grs", function()
+			vim.keymap.set("n", "gi", function()
 				local params = vim.lsp.util.make_position_params(0, "utf-16")
 				client:request("workspace/executeCommand", {
 					command = "typescript.goToSourceDefinition",
@@ -108,6 +118,18 @@ vim.api.nvim_create_autocmd("LspAttach", {
 					end
 				end, ev.buf)
 			end, { buffer = ev.buf, desc = "Go to Source Definition" })
+		end
+
+		-- ty-specific
+		if client.name == "ty" then
+			-- ty's goto_definition already maps past stub files to the source,
+			-- so it matches TypeScript's goToSourceDefinition behavior.
+			vim.keymap.set("n", "gi", vim.lsp.buf.definition, { buffer = ev.buf, desc = "Go to Source Definition" })
+		end
+
+		-- rust_analyzer-specific
+		if client.name == "rust_analyzer" then
+			vim.keymap.set("n", "gi", vim.lsp.buf.definition, { buffer = ev.buf, desc = "Go to Source Definition" })
 		end
 	end,
 })
