@@ -41,12 +41,22 @@ PAINT_FILE="$(mktemp "${TMPDIR:-/tmp}/tmux-leap-paint.XXXXXX")"
 RESULT_FILE="$(mktemp "${TMPDIR:-/tmp}/tmux-leap-result.XXXXXX")"
 trap 'rm -f "$CONTENT_FILE" "$PAINT_FILE" "$RESULT_FILE"' EXIT
 
+# For live (non-copy-mode) panes, enter copy mode now to freeze the visible
+# content before capturing. Without this, new terminal output arriving during
+# the popup shifts the rows so that "top-line + cursor-down N" after the popup
+# no longer lands on the captured row N.
+WAS_IN_COPY_MODE="$IN_COPY_MODE"
+if [ "$IN_COPY_MODE" != "1" ]; then
+    tmux copy-mode -t "$PANE_ID"
+    IN_COPY_MODE=1
+fi
+
 # Capture the lines currently visible at the scroll position.
 # tmux line 0 = top of live pane; negative = history above it.
 # Visible area when scrolled by N: lines -N to (-N + PANE_HEIGHT - 1).
 CAPTURE_START=$(( -SCROLL_OFFSET ))
 CAPTURE_END=$(( PANE_HEIGHT - 1 - SCROLL_OFFSET ))
-tmux capture-pane -p -e -S "$CAPTURE_START" -E "$CAPTURE_END" -t "$PANE_ID" > "$CONTENT_FILE"
+tmux capture-pane -p -e -N -S "$CAPTURE_START" -E "$CAPTURE_END" -t "$PANE_ID" > "$CONTENT_FILE"
 
 # A separate paint file is used only for the popup prepaint. -N preserves the
 # trailing cells so the popup faithfully covers the underlying pane; awk rewrites
@@ -96,21 +106,21 @@ tmux display-popup \
     -b none \
     -E "$POPUP_CMD"
 
-# Nothing selected — user cancelled
-[ -s "$RESULT_FILE" ] || exit 0
+# Nothing selected — user cancelled; exit copy mode if we entered it.
+if ! [ -s "$RESULT_FILE" ]; then
+    if [ "$WAS_IN_COPY_MODE" != "1" ]; then
+        tmux send-keys -t "$PANE_ID" -X cancel 2>/dev/null || true
+    fi
+    exit 0
+fi
 
 # Result is "row:col" (0-indexed from top-left of visible area)
 IFS=: read -r row col < "$RESULT_FILE"
 [[ "$row" =~ ^[0-9]+$ && "$col" =~ ^[0-9]+$ ]] || exit 0
 
-# If already in copy mode, skip the copy-mode command — calling it again
-# resets the scroll position to history-bottom before we can navigate.
-if [ "$IN_COPY_MODE" != "1" ]; then
-    set -- copy-mode -t "$PANE_ID" \;
-else
-    set --
-fi
-set -- "$@" send-keys -t "$PANE_ID" -X top-line
+# We are already in copy mode (entered above or was already active).
+# top-line moves to the top of the frozen visible area = row 0 of the capture.
+set -- send-keys -t "$PANE_ID" -X top-line
 if [ "$row" -gt 0 ]; then
     set -- "$@" \; send-keys -t "$PANE_ID" -X -N "$row" cursor-down
 fi

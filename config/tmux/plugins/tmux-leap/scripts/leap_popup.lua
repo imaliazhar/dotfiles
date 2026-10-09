@@ -129,7 +129,7 @@ end
 -- ── terminal/string helpers ─────────────────────────────────────────────────
 
 local function strip_ansi(s)
-    s = s:gsub("\027%[[%d%;%:%?%>%<%=]*[%a%@%`%~]", "") -- CSI sequences
+    s = s:gsub("\027%[[ -?]*[@-~]", "") -- CSI sequences (param 0x20-0x3F, final 0x40-0x7E)
     s = s:gsub("\027[P%]X%^_][^\007]*\007", "")          -- DCS/OSC/APC … BEL
     s = s:gsub("\027[P%]X%^_][^\027]*\027\\", "")        -- DCS/OSC/APC … ST
     s = s:gsub("\027.", "")                               -- 2-char ESC sequences
