@@ -46,12 +46,6 @@ return {
 			branch = "0.2.x",
 		},
 		"debugloop/telescope-undo.nvim",
-		{
-			"axkirillov/hbac.nvim",
-			config = {
-				threshold = 7,
-			},
-		},
 		"kkharji/sqlite.lua",
 		{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 	},
@@ -133,7 +127,6 @@ return {
 
 		telescope.load_extension("smart_open")
 		telescope.load_extension("undo")
-		telescope.load_extension("hbac")
 
 		local builtin = require("telescope.builtin")
 		local extensions = telescope.extensions

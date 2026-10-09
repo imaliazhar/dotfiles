@@ -1,6 +1,8 @@
 return {
 	"dmtrKovalenko/fff.nvim",
-	build = "cargo build --release",
+	-- Build only the Neovim cdylib. Building the whole workspace also builds
+	-- fff-mcp, whose default `zlob` feature requires Zig.
+	build = "cargo build --release -p fff-nvim",
 	opts = {
 		preview = {
 			enabled = false,

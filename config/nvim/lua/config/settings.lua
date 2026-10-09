@@ -30,6 +30,7 @@ vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decr
 vim.o.foldlevelstart = 99
 vim.o.foldenable = false
 
+vim.opt.autoread = true
 vim.opt.grepprg = "rg --vimgrep --smart-case --fixed-strings -- "
 vim.opt.grepformat = "%f:%l:%c:%m"
 
@@ -48,3 +49,5 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 		end
 	end,
 })
+
+-- require("vim._core.ui2").enable()
