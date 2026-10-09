@@ -166,6 +166,9 @@ setup_dotfiles() {
   log "Setting default theme..."
   run "$DOTFILES/config/theme/scripts/set-theme.sh" rose-pine dark
 
+  log "Generating AeroSpace config..."
+  run "$DOTFILES/scripts/aerospace-monitor-toggle.sh" built-in
+
   run mkdir -p ~/.claude
   ensure_symlink "$DOTFILES/config/claude/settings.json" ~/.claude/settings.json
   ensure_symlink "$DOTFILES/config/claude/statusline-command.sh" ~/.claude/statusline-command.sh
@@ -545,6 +548,7 @@ main() {
     massren \
     neovim \
     ripgrep \
+    sevenzip \
     stylua \
     tmux \
     trash \

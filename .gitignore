@@ -26,3 +26,4 @@ config/raycast
 config/yarn
 config/zed/prompts
 config/zsh/secrets.zsh
+config/aerospace/aerospace.toml
