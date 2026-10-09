@@ -42,11 +42,6 @@ if status is-interactive
     # # SDKs and toolchains
     # --------------------------------------------------------------------------
 
-    # Node
-    if command -q fnm
-        fnm env --use-on-cd --shell fish | source
-    end
-
     # Rust
     if test -d $HOME/.cargo/bin
         fish_add_path $HOME/.cargo/bin
