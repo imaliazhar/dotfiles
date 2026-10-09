@@ -127,6 +127,31 @@ end, { desc = "Copy root folder path", noremap = true, silent = true })
 -- Diffview Integration
 map({ "n", "v" }, "<Leader>gg", ":DiffviewOpen<CR>", { desc = "Open diff view" })
 map({ "n", "v" }, "<Leader>gd", ":DiffviewClose<CR>", { desc = "Close diff view" })
+
+-- Diff the whole branch against its merge-base with the default branch (GitHub PR view).
+-- Resolves the base from origin/HEAD, falling back to common names, so it works
+-- whether the main line is master, main, macos, etc.
+map({ "n", "v" }, "<Leader><Leader>G", function()
+	local dir = vim.fn.expand("%:p:h")
+	local function git(...)
+		local out = vim.fn.system({ "git", "-C", dir, ... })
+		return vim.v.shell_error == 0 and vim.trim(out) or nil
+	end
+	local base
+	local default = git("symbolic-ref", "--short", "refs/remotes/origin/HEAD")
+	for _, ref in ipairs({ default, "origin/master", "origin/main", "master", "main" }) do
+		if ref and ref ~= "" and git("rev-parse", "--verify", "--quiet", ref) then
+			base = ref
+			break
+		end
+	end
+	if not base then
+		vim.notify("diffview: no base branch found (origin default / master / main)", vim.log.levels.ERROR)
+		return
+	end
+	-- A...B uses the merge-base of A and B as the diff base.
+	vim.cmd("DiffviewOpen " .. base .. "...HEAD")
+end, { desc = "Diff branch vs merge-base (PR view)" })
 map({ "n", "v" }, "<Leader>gh", ":DiffviewFileHistory %<CR>", { desc = "Open file history for current file" })
 map({ "n", "v" }, "<Leader>gH", ":DiffviewFileHistory<CR>", { desc = "Open file history for current branch" })
 

@@ -34,6 +34,7 @@ vim.opt.grepprg = "rg --vimgrep --smart-case --fixed-strings -- "
 vim.opt.grepformat = "%f:%l:%c:%m"
 
 vim.opt.winborder = "rounded"
+vim.opt.fillchars:append({ diff = "╱" })
 
 vim.cmd("packadd cfilter")
 
