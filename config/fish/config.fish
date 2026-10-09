@@ -1,5 +1,6 @@
 if status is-interactive
     # Commands to run in interactive sessions can go here
+    set -g fish_greeting
 
     # Abbreviations
     # --------------------------------------------------------------------------
@@ -32,10 +33,6 @@ if status is-interactive
     abbr --add grc git rebase --continue
     abbr --add gignore git update-index --skip-worktree
     abbr --add gunignore git update-index --no-skip-worktree
-
-    abbr --add aa rewise-german-word-audio
-    abbr --add at rewise-german-word-answer
-    abbr --add ai rewise-german-word-explain
 
     abbr --add gg lazygit
 

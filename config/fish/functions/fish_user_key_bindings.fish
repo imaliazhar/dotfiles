@@ -36,7 +36,6 @@ function fish_user_key_bindings
     for mode in default insert
         bind -M $mode \cg fuzzy_git_branch
         bind -M $mode \ct fuzzy_git_commit
-        bind -M $mode \ck rewise-german-word-explain
     end
 
     bind -M insert ! bind_bang

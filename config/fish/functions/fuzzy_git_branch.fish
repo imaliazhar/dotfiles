@@ -15,8 +15,8 @@ function fuzzy_git_branch
         return
     end
     
-    # Clean up selected branch (remove '*', trim spaces)
-    set -l output (string trim (string replace -r '^\*?\s*' '' "$selected_branch"))
+    # Clean up selected branch (remove '*' or '+' worktree marker, trim spaces)
+    set -l output (string trim (string replace -r '^[*+]?\s*' '' "$selected_branch"))
     
     # Insert into command line
     commandline -i "$output "
