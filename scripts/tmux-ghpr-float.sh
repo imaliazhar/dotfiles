@@ -13,8 +13,8 @@ if [ "$current_session" = "$session" ]; then
 fi
 
 if ! tmux has-session -t "=$session" 2>/dev/null; then
-    tmux new-session -d -s "$session" -c "$path" -e GHPR_POPUP=1 "ghpr; tmux detach-client -s '=$session'"
+    tmux new-session -d -s "$session" -c "$path" -e "GHPR_POPUP=$session" "ghpr; tmux detach-client -s '=$session'"
     tmux set-option -t "$session" status off
 fi
 
-tmux display-popup -c "$client" -E -w 80% -h 80% "TMUX= tmux attach-session -t '=$session'"
+tmux display-popup -c "$client" -E -B -w 100% -h 100% "TMUX= tmux attach-session -t '=$session'"
