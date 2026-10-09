@@ -4,12 +4,12 @@ show_symlink = false
 
 [opener]
 edit = [
-	{ run = 'nvr "$@"', desc = "$EDITOR", block = false, for = "unix" },
+	{ run = "nvr %s", desc = "$EDITOR", block = false, for = "unix" },
 ]
 
 # ~/.config/yazi/yazi.toml
 [[opener.bulk-rename]]
-run   = 'nvim "$@"'
+run   = "nvim %s"
 block = true
 
 [[open.prepend_rules]]

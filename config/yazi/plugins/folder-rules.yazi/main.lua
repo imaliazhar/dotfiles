@@ -1,3 +1,15 @@
+local function has_git(cwd)
+	local git = tostring(cwd) .. "/.git"
+	-- `.git` is a directory in a normal repo (probe via HEAD) and a regular
+	-- file inside a worktree — fall back so both cases are detected.
+	local f = io.open(git .. "/HEAD", "r") or io.open(git, "r")
+	if f then
+		f:close()
+		return true
+	end
+	return false
+end
+
 local function setup()
 	ps.sub("cd", function()
 		local cwd = cx.active.current.cwd
@@ -7,13 +19,12 @@ local function setup()
 			ya.emit("sort", { "mtime", reverse = true, dir_first = false })
 		end
 
-		-- -- Hide hidden files when in home directory
-		-- --- @diagnostic disable-next-line: param-type-mismatch -- $HOME will never be nil
-		-- if cwd:ends_with(os.getenv("HOME")) then
-		-- 	ya.emit("hidden", { "hide" })
-		-- else
-		-- 	ya.emit("hidden", { "show" })
-		-- end
+		-- Reveal dotfiles when sitting at the root of a git repo
+		if has_git(cwd) then
+			ya.emit("hidden", { "show" })
+		else
+			ya.emit("hidden", { "hide" })
+		end
 	end)
 end
 

@@ -1,11 +1,11 @@
 [[mgr.prepend_keymap]]
 on = [ "O" ]
-run = "shell 'open -R $0'"
+run = "shell -- open -R %h"
 desc = "Open the file in Finder"
 
 [[mgr.prepend_keymap]]
 on = "<C-o>"
-run = 'shell -- qlmanage -p "$@"'
+run = "shell -- qlmanage -p %s"
 desc = "Preview the file using Quick Look"
 
 [[mgr.prepend_keymap]]
@@ -30,7 +30,7 @@ desc = "Enter the child directory, or open the file"
 
 [[mgr.prepend_keymap]]
 on   = "!"
-run  = 'shell "$SHELL" --block --confirm'
+run  = 'shell --block -- "$SHELL"'
 desc = "Open shell here"
 
 [[mgr.prepend_keymap]]
