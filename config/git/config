@@ -13,7 +13,7 @@
 [credential]
 	helper = store
 [user]
-	name = imAliAzhar
+	name = Ali Azhar
 	email = aliazhkh@gmail.com
 [interactive]
     diffFilter = delta --color-only
@@ -33,3 +33,8 @@
 
 [include]
     path = ~/.config/delta/themes.gitconfig
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
