@@ -32,6 +32,9 @@ function qc --description 'Quick Commands Launcher'
         end
 
         set -l cmd (jq -r --arg key "$key" '.commands[] | select(.key == $key) | .command' "$COMMANDS_FILE")
+        if test -z "$cmd" -a "$COMMANDS_FILE" != "$GLOBAL_COMMANDS_FILE"
+            set cmd (jq -r --arg key "$key" '.commands[] | select(.key == $key) | .command' "$GLOBAL_COMMANDS_FILE")
+        end
         if test -z "$cmd"
             echo "No command found for key: $key"
             return 1
@@ -45,6 +48,9 @@ function qc --description 'Quick Commands Launcher'
     set -l selection (begin
         echo "[n] Add new command"
         jq -r '.commands[] | "[" + .key + "] " + .description' "$COMMANDS_FILE"
+        if test "$COMMANDS_FILE" != "$GLOBAL_COMMANDS_FILE"
+            jq -r '.commands[] | "[" + .key + "] " + .description + " (global)"' "$GLOBAL_COMMANDS_FILE"
+        end
     end | fzf \
         --prompt="$scope_display > " \
         --height=50% \
@@ -63,6 +69,9 @@ function qc --description 'Quick Commands Launcher'
 
     if test -n "$key"
         set -l cmd (jq -r --arg key "$key" '.commands[] | select(.key == $key) | .command' "$COMMANDS_FILE")
+        if test -z "$cmd" -a "$COMMANDS_FILE" != "$GLOBAL_COMMANDS_FILE"
+            set cmd (jq -r --arg key "$key" '.commands[] | select(.key == $key) | .command' "$GLOBAL_COMMANDS_FILE")
+        end
         if test -n "$cmd"
             commandline -r "$cmd"
         end

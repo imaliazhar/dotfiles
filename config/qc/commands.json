@@ -13,7 +13,17 @@
     {
       "key": "k",
       "description": "Setup App Native Kit",
-      "command": "rm -fr node_modules/@goeuro/app-rn-bundles/app-native-kit && ln -s $HOME/Projects/app/packages/app-native-kit/ node_modules/@goeuro/app-rn-bundles/app-native-kit"
+      "command": "rm -fr $HOME/Projects/ronald/node_modules/@goeuro/app-rn-bundles/app-native-kit && ln -s $PWD/packages/app-native-kit/ $HOME/Projects/ronald/node_modules/@goeuro/app-rn-bundles/app-native-kit && rm -fr $HOME/Projects/rosie/node_modules/@goeuro/app-rn-bundles/app-native-kit && ln -s $PWD/packages/app-native-kit/ $HOME/Projects/rosie/node_modules/@goeuro/app-rn-bundles/app-native-kit"
+    },
+    {
+      "key": "s",
+      "description": "Disable sleep",
+      "command": "sudo pmset -a disablesleep "
+    },
+    {
+      "key": "S",
+      "description": "Enable sleep",
+      "command": "sudo pmset -a disablesleep 1"
     }
   ]
 }
