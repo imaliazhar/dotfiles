@@ -22,16 +22,13 @@ $HOME/.local/bin/stats_provider --cpu usage --disk usage --memory ram_usage --in
 # ln -s ~/Dotfiles/config/sketchybar ~/Dotfiles/config/bottom_bar
 
 POSITION="top"
+DISPLAY_ID="2"
 if [ "$BAR_NAME" = "bottom_bar" ]; then
   POSITION="bottom"
+  DISPLAY_ID="main"
 fi
 
-HIDDEN="false"
-if [ "$BAR_NAME" = "bottom_bar" ]; then
-  $HIDDEN="true"
-fi
-
-$BAR_NAME --bar position=$POSITION height=32 color=0xFF000000 padding_left=16 padding_right=16 display=$DISPLAY_ID hidden=$HIDDEN
+$BAR_NAME --bar position=$POSITION height=32 color=0xFF000000 padding_left=16 padding_right=16 display=$DISPLAY_ID
 
 ##### Changing Defaults #####
 # We now change some default values, which are applied to all further items.
