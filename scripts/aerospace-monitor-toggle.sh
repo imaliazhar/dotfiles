@@ -1,20 +1,34 @@
 #!/bin/bash
-# Toggle aerospace workspace-to-monitor assignment between built-in and external monitor
+# Switch aerospace workspace-to-monitor assignment between the @monitor-mode blocks in aerospace.toml.
+# Usage: aerospace-monitor-toggle.sh [built-in|external|gaming]
+# Without an argument, toggles built-in -> external, anything else -> built-in.
 
 CONFIG="$HOME/.config/aerospace/aerospace.toml"
 
-# Check current state by looking at line after built-in marker
-if sed -n '/@monitor-toggle:built-in/{n;p;}' "$CONFIG" | grep -q "^0 = "; then
-    # Currently built-in mode -> switch to external
-    sed -i '' '/@monitor-toggle:built-in/{n;s/^/# /;n;s/^/# /;}' "$CONFIG"
-    sed -i '' '/@monitor-toggle:external/{n;s/^# //;n;s/^# //;}' "$CONFIG"
-    echo "Switched to external monitor"
-else
-    # Currently external mode -> switch to built-in
-    sed -i '' '/@monitor-toggle:built-in/{n;s/^# //;n;s/^# //;}' "$CONFIG"
-    sed -i '' '/@monitor-toggle:external/{n;s/^/# /;n;s/^/# /;}' "$CONFIG"
-    echo "Switched to built-in monitor"
+current=$(awk '
+    /^# @monitor-mode:/ { block = substr($0, 17); next }
+    /^$/ { block = "" }
+    block != "" && !/^#/ { print block; exit }
+' "$CONFIG")
+
+mode="$1"
+if [ -z "$mode" ]; then
+    if [ "$current" = "built-in" ]; then mode="external"; else mode="built-in"; fi
 fi
 
-# Reload aerospace config
+if ! grep -q "^# @monitor-mode:$mode$" "$CONFIG"; then
+    echo "Unknown mode: $mode" >&2
+    exit 1
+fi
+
+updated=$(awk -v mode="$mode" '
+    /^# @monitor-mode:/ { block = substr($0, 17); print; next }
+    /^$/ { block = "" }
+    block != "" { sub(/^# /, ""); if (block != mode) $0 = "# " $0 }
+    { print }
+' "$CONFIG")
+printf '%s\n' "$updated" > "$CONFIG"
+
+echo "Switched to $mode monitor mode"
+
 aerospace reload-config
