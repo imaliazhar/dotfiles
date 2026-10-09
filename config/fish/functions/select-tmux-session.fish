@@ -56,20 +56,30 @@ function select-tmux-session --description 'FZF-based tmux session picker'
 
     for i in (seq (count $session_names_list))
         if test $active_status_list[$i] = true
-            set -a formatted_session_list "$green• $session_names_list[$i]$nc"
+            set display "$green• $session_names_list[$i]$nc"
         else
-            set -a formatted_session_list "  $session_names_list[$i]"
+            set display "  $session_names_list[$i]"
         end
+
+        # Stash the session dir (home abbreviated to ~) as a hidden second field
+        # (tab-delimited) so a key binding can copy it. --with-nth 1 keeps it off-screen.
+        set -a formatted_session_list (printf '%s\t%s' $display (string replace -- $HOME '~' $session_dirs_list[$i]))
     end
 
-    set selected_session (printf "%s\n" $formatted_session_list | fzf --no-info --no-scrollbar)
+    # ctrl-y copies the project path of the row under the cursor. {2} is the hidden
+    # dir field — execute placeholders read the original line, so it works despite
+    # --with-nth 1 hiding the field from the display/search.
+    set selected_line (printf "%s\n" $formatted_session_list | fzf --no-info --no-scrollbar \
+        --delimiter \t --with-nth 1 \
+        --bind 'ctrl-y:execute-silent(printf %s {2} | pbcopy)+abort')
 
-    if test -z "$selected_session"
+    if test -z "$selected_line"
         return
     end
 
-    # Remove the leading "• " or spaces added for formatting
-    set selected_session (string sub -s 3 $selected_session)
+    # fzf returns the whole tab-delimited line; keep only the visible name field,
+    # then strip the leading "• " or two-space formatting prefix.
+    set selected_session (string sub -s 3 (echo $selected_line | cut -f1))
 
     set selected_idx (contains -i $selected_session $session_names_list)
 
