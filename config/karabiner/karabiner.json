@@ -136,7 +136,6 @@
                                     {
                                         "bundle_identifiers": [
                                             "^com\\.github\\.wez\\.wezterm$",
-                                            "^org\\.gnu\\.Emacs$",
                                             "^dev\\.zed\\.Zed$"
                                         ],
                                         "type": "frontmost_application_unless"
@@ -166,8 +165,7 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "^com\\.github\\.wez\\.wezterm$",
-                                            "^org\\.gnu\\.Emacs$"
+                                            "^com\\.github\\.wez\\.wezterm$"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }

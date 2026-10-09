@@ -119,10 +119,6 @@ if status is-interactive
     # PATH overrides
     # --------------------------------------------------------------------------
     fish_add_path -m ~/.local/bin
-    fish_add_path ~/.config/emacs/bin
-
-    # Emacs: doom CLI tools use brew's emacs (emacs-mac hangs in batch mode)
-    set -gx EMACS /opt/homebrew/opt/emacs/bin/emacs
 
     # Initialize TMUX
     # --------------------------------------------------------------------------
