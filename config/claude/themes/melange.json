@@ -1,0 +1,8 @@
+{
+  "name": "Melange",
+  "base": "dark-daltonized",
+  "overrides": {
+    "permission": "#E49B5D",
+    "permissionShimmer": "#EBC06D"
+  }
+}
