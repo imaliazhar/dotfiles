@@ -68,7 +68,17 @@ touch "$CONFIG/wezterm/wezterm.lua"
 
 tmux source-file "$CONFIG/tmux/tmux.conf" 2>/dev/null || true
 
+pids=()
 for socket in "${TMPDIR:-/tmp/}"nvim."$USER"/*/nvim.*; do
   [[ -S "$socket" ]] || continue
-  nvim --server "$socket" --remote-expr 'execute("source ~/.config/nvim/after/plugin/theme.lua")' >/dev/null 2>&1 || true
+  nvim --server "$socket" --remote-expr 'execute("source ~/.config/nvim/after/plugin/theme.lua")' >/dev/null 2>&1 &
+  pids+=($!)
 done
+
+# An nvim waiting at a prompt never answers, so stop waiting for it after two seconds
+if ((${#pids[@]})); then
+  (sleep 2 && kill "${pids[@]}") >/dev/null 2>&1 &
+  watchdog=$!
+  wait "${pids[@]}" 2>/dev/null || true
+  kill "$watchdog" 2>/dev/null || true
+fi
