@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Switch lazygit, yazi, wezterm, tmux and nvim to a theme.
+#
+# Usage: theme              pick a theme and mode with fzf
+#        theme NAME MODE    e.g. theme rose-pine dark
+#        theme MODE         keep the current theme, switch to dark or light
+
+set -euo pipefail
+
+CONFIG="$HOME/.config"
+THEMES="$CONFIG/theme"
+CURRENT="$THEMES/current"
+
+themes() {
+  for dir in "$THEMES"/*/; do
+    basename "$dir"
+  done
+}
+
+usage() {
+  echo "Usage: theme [$(themes | paste -sd '|' -)] [dark|light]" >&2
+  exit 1
+}
+
+case $# in
+0)
+  current="$(cat "$CURRENT" 2>/dev/null || true)"
+  choice="$(
+    for name in $(themes); do
+      printf '%s dark\n%s light\n' "$name" "$name"
+    done | fzf --header "current: ${current:-none}" --height 40% --reverse
+  )" || exit 0
+  read -r name mode <<<"$choice"
+  ;;
+1)
+  read -r name _ <"$CURRENT" || usage
+  mode="$1"
+  ;;
+2)
+  name="$1"
+  mode="$2"
+  ;;
+*) usage ;;
+esac
+
+[[ -d "$THEMES/$name" && "$mode" =~ ^(dark|light)$ ]] || usage
+
+link() {
+  ln -sfn "$THEMES/$name/$1" "$CONFIG/$2"
+}
+
+link "lazygit/$mode.yml" lazygit/theme.yml
+link "yazi/$mode" yazi/flavors/theme.yazi
+link "wezterm/$mode.lua" wezterm/theme.lua
+link "tmux/$mode.tmux" tmux/theme.tmux
+link "nvim/$mode.lua" nvim/theme.lua
+
+echo "$name $mode" >"$CURRENT"
+echo "Switched to $name $mode"
+
+# Touch the config so wezterm reloads it
+touch "$CONFIG/wezterm/wezterm.lua"
+
+tmux source-file "$CONFIG/tmux/tmux.conf" 2>/dev/null || true
+
+for socket in "${TMPDIR:-/tmp/}"nvim."$USER"/*/nvim.*; do
+  [[ -S "$socket" ]] || continue
+  nvim --server "$socket" --remote-expr 'execute("source ~/.config/nvim/after/plugin/theme.lua")' >/dev/null 2>&1 || true
+done

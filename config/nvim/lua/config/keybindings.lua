@@ -126,7 +126,6 @@ end, { desc = "Execute current lua file" })
 -- Reload theme
 map("n", "<leader><leader>rt", function()
 	vim.cmd("source ~/.config/nvim/after/plugin/theme.lua")
-	vim.cmd("source ~/.config/nvim/after/plugin/lualine.lua")
 end, { desc = "Reload theme" })
 
 -- map("n", "<leader>el", ":.lua<CR>", { desc = "Execute current lua line" })
