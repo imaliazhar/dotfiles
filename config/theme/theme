@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Switch lazygit, yazi, wezterm, tmux and nvim to a theme.
+# Switch lazygit, yazi, wezterm, tmux, nvim and Claude Code to a theme.
 #
 # Usage: theme              pick a theme and mode with fzf
 #        theme NAME MODE    e.g. theme rose-pine dark
@@ -48,14 +48,17 @@ esac
 grep -qx "$name $mode" < <(variants) || usage
 
 link() {
-  ln -sfn "$THEMES/$name/$1" "$CONFIG/$2"
+  mkdir -p "$(dirname "$2")"
+  ln -sfn "$THEMES/$name/$1" "$2"
 }
 
-link "lazygit/$mode.yml" lazygit/theme.yml
-link "yazi/$mode" yazi/flavors/theme.yazi
-link "wezterm/$mode.lua" wezterm/theme.lua
-link "tmux/$mode.tmux" tmux/theme.tmux
-link "nvim/$mode.lua" nvim/theme.lua
+link "lazygit/$mode.yml" "$CONFIG/lazygit/theme.yml"
+link "yazi/$mode" "$CONFIG/yazi/flavors/theme.yazi"
+link "wezterm/$mode.lua" "$CONFIG/wezterm/theme.lua"
+link "tmux/$mode.tmux" "$CONFIG/tmux/theme.tmux"
+link "nvim/$mode.lua" "$CONFIG/nvim/theme.lua"
+# Selected in Claude Code with /theme as custom:current
+link "claude/$mode.json" "$HOME/.claude/themes/current.json"
 
 echo "$name $mode" >"$CURRENT"
 echo "Switched to $name $mode"
