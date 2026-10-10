@@ -90,7 +90,7 @@ clone_dotfiles_repo() {
   fi
 
   log "Cloning Dotfiles repository..."
-  run git clone https://github.com/imAliAzhar/dotfiles.git "$DOTFILES"
+  run git clone https://github.com/imaliazhar/dotfiles.git "$DOTFILES"
 }
 
 setup_dirs() {
