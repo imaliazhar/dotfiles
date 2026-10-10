@@ -135,29 +135,9 @@ install_homebrew() {
   log "Homebrew installed"
 }
 
-ensure_symlink() {
-  local target="$1"
-  local link="$2"
-
-  if [[ -L "$link" && "$(readlink "$link")" == "$target" ]]; then
-    return 0
-  fi
-
-  # Remove whatever is there (stale symlink, file, or directory)
-  if [[ -e "$link" || -L "$link" ]]; then
-    run rm -rf "$link"
-  fi
-
-  run mkdir -p "$(dirname "$link")"
-  run ln -s "$target" "$link"
-}
-
 setup_dotfiles() {
   log "Creating symlinks for dotfiles..."
-
-  ensure_symlink "$DOTFILES/config" ~/.config
-  ensure_symlink "$DOTFILES/bin" ~/.local/bin
-  ensure_symlink "$DOTFILES/zsh/zshenv" ~/.zshenv
+  run "$DOTFILES/scripts/setup-symlinks.sh"
 
   log "Configuring Hammerspoon to use dotfiles config..."
   run defaults write org.hammerspoon.Hammerspoon MJConfigFile "~/.config/hammerspoon/init.lua"
@@ -167,43 +147,6 @@ setup_dotfiles() {
 
   log "Generating AeroSpace config..."
   run "$DOTFILES/scripts/aerospace-monitor-toggle.sh" built-in
-
-  run mkdir -p ~/.claude
-  ensure_symlink "$DOTFILES/config/claude/settings.json" ~/.claude/settings.json
-  ensure_symlink "$DOTFILES/config/claude/statusline-command.sh" ~/.claude/statusline-command.sh
-}
-
-setup_alfred() {
-  log "Setting up Alfred preferences symlink..."
-
-  local alfred_support_dir="$HOME/Library/Application Support/Alfred"
-  local alfred_prefs="$alfred_support_dir/Alfred.alfredpreferences"
-  local dotfiles_prefs="$DOTFILES/config/alfred/Alfred.alfredpreferences"
-
-  # Check if dotfiles contains Alfred preferences
-  if [[ ! -d "$dotfiles_prefs" ]]; then
-    log "Alfred preferences not found in dotfiles, skipping..."
-    return 0
-  fi
-
-  # Skip if symlink already exists and points to correct location
-  if [[ -L "$alfred_prefs" && "$(readlink "$alfred_prefs")" == "$dotfiles_prefs" ]]; then
-    log "Alfred symlink already configured"
-    return 0
-  fi
-
-  # Remove existing preferences (backup if not a symlink)
-  if [[ -d "$alfred_prefs" && ! -L "$alfred_prefs" ]]; then
-    log "Backing up existing Alfred preferences..."
-    run mv "$alfred_prefs" "$alfred_prefs.backup"
-  elif [[ -L "$alfred_prefs" ]]; then
-    run rm "$alfred_prefs"
-  fi
-
-  run mkdir -p "$alfred_support_dir"
-  run ln -s "$dotfiles_prefs" "$alfred_prefs"
-
-  log "Alfred preferences symlinked"
 }
 
 download() {
@@ -522,7 +465,6 @@ main() {
   clone_dotfiles_repo
   install_homebrew
   setup_dotfiles
-  setup_alfred
 
   run brew install \
     atuin \
