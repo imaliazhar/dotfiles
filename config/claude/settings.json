@@ -103,7 +103,7 @@
     "enabled": true,
     "mode": "hold"
   },
-  "theme": "dark",
+  "theme": "custom:current",
   "verbose": true,
   "switchModelsOnFlag": false,
   "agentPushNotifEnabled": true,
