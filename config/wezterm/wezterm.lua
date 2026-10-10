@@ -24,6 +24,7 @@ config.window_padding = {
 	bottom = 0,
 }
 
+config.color_schemes = theme.color_schemes
 config.color_scheme = theme.color_scheme
 
 config.colors = {

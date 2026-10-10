@@ -1,0 +1,121 @@
+# https://github.com/savq/melange-nvim
+
+[mgr]
+cwd = { fg = "#7D6658" }
+
+find_keyword  = { fg = "#A06D00", italic = true }
+find_position = { fg = "#BE79BB", bg = "reset", italic = true }
+
+marker_copied   = { fg = "#6E9B72", bg = "#6E9B72" }
+marker_cut      = { fg = "#C77B8B", bg = "#C77B8B" }
+marker_marked   = { fg = "#739797", bg = "#739797" }
+marker_selected = { fg = "#BC5C00", bg = "#BC5C00" }
+
+count_copied   = { fg = "#F1F1F1", bg = "#6E9B72" }
+count_cut      = { fg = "#F1F1F1", bg = "#C77B8B" }
+count_selected = { fg = "#F1F1F1", bg = "#BC5C00" }
+
+border_symbol = "│"
+border_style  = { fg = "#A98A78" }
+
+[tabs]
+active   = { fg = "#F1F1F1", bg = "#7D6658", bold = true }
+inactive = { fg = "#7D6658", bg = "#D9D3CE" }
+
+[mode]
+normal_main = { fg = "#F1F1F1", bg = "#7D6658", bold = true }
+normal_alt  = { fg = "#7D6658", bg = "#D9D3CE" }
+
+select_main = { fg = "#F1F1F1", bg = "#904180", bold = true }
+select_alt  = { fg = "#904180", bg = "#D9D3CE" }
+
+unset_main  = { fg = "#F1F1F1", bg = "#BF0021", bold = true }
+unset_alt   = { fg = "#BF0021", bg = "#D9D3CE" }
+
+[indicator]
+parent  = { fg = "#F1F1F1", bg = "#A98A78" }
+current = { fg = "#F1F1F1", bg = "#BC5C00" }
+preview = { fg = "#BC5C00", underline = true }
+
+[status]
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+
+progress_label  = { fg = "#54433A", bold = true }
+progress_normal = { fg = "#BC5C00", bg = "#D9D3CE" }
+progress_error  = { fg = "#C77B8B", bg = "#D9D3CE" }
+
+perm_type  = { fg = "#A06D00" }
+perm_read  = { fg = "#BC5C00" }
+perm_write = { fg = "#C77B8B" }
+perm_exec  = { fg = "#6E9B72" }
+perm_sep   = { fg = "#A98A78" }
+
+[input]
+border   = { fg = "#BC5C00" }
+title    = {}
+value    = {}
+selected = { reversed = true }
+
+[pick]
+border   = { fg = "#BC5C00" }
+active   = { fg = "#BE79BB" }
+inactive = {}
+
+[confirm]
+border     = { fg = "#BC5C00" }
+title      = { fg = "#BC5C00" }
+body       = {}
+list       = {}
+btn_yes    = { reversed = true }
+btn_no     = {}
+
+[cmp]
+border = { fg = "#BC5C00" }
+
+[tasks]
+border  = { fg = "#BC5C00" }
+title   = {}
+hovered = { underline = true }
+
+[which]
+mask            = { bg = "#E9E1DB" }
+cand            = { fg = "#A06D00" }
+rest            = { fg = "#A98A78" }
+desc            = { fg = "#BE79BB" }
+separator       = "  "
+separator_style = { fg = "#A98A78" }
+
+[help]
+chord   = { fg = "#A06D00" }
+action  = { fg = "#BE79BB" }
+hovered = { bg = "#D9D3CE", bold = true }
+
+[notify]
+title_info  = { fg = "#6E9B72" }
+title_warn  = { fg = "#BC5C00" }
+title_error = { fg = "#C77B8B" }
+
+[filetype]
+rules = [
+	# Media
+	{ mime = "image/*", fg = "#A06D00" },
+	{ mime = "{audio,video}/*", fg = "#BC5C00" },
+
+	# Archives
+	{ mime = "application/*zip", fg = "#C77B8B" },
+	{ mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}", fg = "#C77B8B" },
+
+	# Documents
+	{ mime = "application/{pdf,doc,rtf}", fg = "#6E9B72" },
+
+	# Fallback
+	{ url = "*", fg = "#54433A" },
+	{ url = "*/", fg = "#BC5C00" }
+]
+
+[spot]
+border = { fg = "#BC5C00" }
+title  = { fg = "#BC5C00" }
+tbl_cell = { fg = "#BC5C00", reversed = true }
+tbl_col = { bold = true }

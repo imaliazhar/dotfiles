@@ -11,14 +11,18 @@ CONFIG="$HOME/.config"
 THEMES="$CONFIG/theme"
 CURRENT="$THEMES/current"
 
-themes() {
-  for dir in "$THEMES"/*/; do
-    basename "$dir"
+# Prints "NAME MODE" for every mode a theme provides
+variants() {
+  local file theme
+  for file in "$THEMES"/*/nvim/*.lua; do
+    theme="${file#"$THEMES"/}"
+    echo "${theme%%/*} $(basename "$file" .lua)"
   done
 }
 
 usage() {
-  echo "Usage: theme [$(themes | paste -sd '|' -)] [dark|light]" >&2
+  echo "Usage: theme [NAME] [MODE], where NAME MODE is one of:" >&2
+  variants | sed 's/^/  /' >&2
   exit 1
 }
 
@@ -26,9 +30,7 @@ case $# in
 0)
   current="$(cat "$CURRENT" 2>/dev/null || true)"
   choice="$(
-    for name in $(themes); do
-      printf '%s dark\n%s light\n' "$name" "$name"
-    done | fzf --header "current: ${current:-none}" --height 40% --reverse
+    variants | fzf --header "current: ${current:-none}" --height 40% --reverse
   )" || exit 0
   read -r name mode <<<"$choice"
   ;;
@@ -43,7 +45,7 @@ case $# in
 *) usage ;;
 esac
 
-[[ -d "$THEMES/$name" && "$mode" =~ ^(dark|light)$ ]] || usage
+grep -qx "$name $mode" < <(variants) || usage
 
 link() {
   ln -sfn "$THEMES/$name/$1" "$CONFIG/$2"

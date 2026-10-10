@@ -1,0 +1,121 @@
+# https://github.com/xero/miasma.nvim
+
+[mgr]
+cwd = { fg = "#c9a554" }
+
+find_keyword  = { fg = "#c9a554", italic = true }
+find_position = { fg = "#bb7744", bg = "reset", italic = true }
+
+marker_copied   = { fg = "#5f875f", bg = "#5f875f" }
+marker_cut      = { fg = "#b36d43", bg = "#b36d43" }
+marker_marked   = { fg = "#c9a554", bg = "#c9a554" }
+marker_selected = { fg = "#78824b", bg = "#78824b" }
+
+count_copied   = { fg = "#222222", bg = "#5f875f" }
+count_cut      = { fg = "#222222", bg = "#b36d43" }
+count_selected = { fg = "#222222", bg = "#78824b" }
+
+border_symbol = "│"
+border_style  = { fg = "#444444" }
+
+[tabs]
+active   = { fg = "#222222", bg = "#d7c483", bold = true }
+inactive = { fg = "#d7c483", bg = "#444444" }
+
+[mode]
+normal_main = { fg = "#222222", bg = "#78824b", bold = true }
+normal_alt  = { fg = "#78824b", bg = "#1c1c1c" }
+
+select_main = { fg = "#222222", bg = "#5f875f", bold = true }
+select_alt  = { fg = "#5f875f", bg = "#1c1c1c" }
+
+unset_main  = { fg = "#222222", bg = "#bb7744", bold = true }
+unset_alt   = { fg = "#bb7744", bg = "#1c1c1c" }
+
+[indicator]
+parent  = { fg = "#222222", bg = "#78824b" }
+current = { fg = "#222222", bg = "#78824b" }
+preview = { fg = "#222222", bg = "#c2c2b0" }
+
+[status]
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+
+progress_label  = { fg = "#d7c483", bold = true }
+progress_normal = { fg = "#78824b", bg = "#444444" }
+progress_error  = { fg = "#b36d43", bg = "#444444" }
+
+perm_type  = { fg = "#78824b" }
+perm_read  = { fg = "#c9a554" }
+perm_write = { fg = "#b36d43" }
+perm_exec  = { fg = "#5f875f" }
+perm_sep   = { fg = "#666666" }
+
+[input]
+border   = { fg = "#78824b" }
+title    = {}
+value    = {}
+selected = { reversed = true }
+
+[pick]
+border   = { fg = "#78824b" }
+active   = { fg = "#bb7744" }
+inactive = {}
+
+[confirm]
+border     = { fg = "#78824b" }
+title      = { fg = "#78824b" }
+body       = {}
+list       = {}
+btn_yes    = { reversed = true }
+btn_no     = {}
+
+[cmp]
+border = { fg = "#78824b" }
+
+[tasks]
+border  = { fg = "#78824b" }
+title   = {}
+hovered = { underline = true }
+
+[which]
+mask            = { bg = "#1c1c1c" }
+cand            = { fg = "#c9a554" }
+rest            = { fg = "#666666" }
+desc            = { fg = "#bb7744" }
+separator       = "  "
+separator_style = { fg = "#444444" }
+
+[help]
+chord   = { fg = "#c9a554" }
+action  = { fg = "#bb7744" }
+hovered = { bg = "#444444", bold = true }
+
+[notify]
+title_info  = { fg = "#5f875f" }
+title_warn  = { fg = "#c9a554" }
+title_error = { fg = "#b36d43" }
+
+[filetype]
+rules = [
+	# Media
+	{ mime = "image/*", fg = "#c9a554" },
+	{ mime = "{audio,video}/*", fg = "#bb7744" },
+
+	# Archives
+	{ mime = "application/*zip", fg = "#b36d43" },
+	{ mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}", fg = "#b36d43" },
+
+	# Documents
+	{ mime = "application/{pdf,doc,rtf}", fg = "#5f875f" },
+
+	# Fallback
+	{ url = "*", fg = "#c2c2b0" },
+	{ url = "*/", fg = "#78824b" }
+]
+
+[spot]
+border = { fg = "#78824b" }
+title  = { fg = "#78824b" }
+tbl_cell = { fg = "#78824b", reversed = true }
+tbl_col = { bold = true }
