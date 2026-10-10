@@ -143,7 +143,7 @@ setup_dotfiles() {
   run defaults write org.hammerspoon.Hammerspoon MJConfigFile "~/.config/hammerspoon/init.lua"
 
   log "Setting default theme..."
-  run "$DOTFILES/config/theme/scripts/set-theme.sh" rose-pine dark
+  run "$DOTFILES/config/theme/theme" rose-pine dark
 
   log "Generating AeroSpace config..."
   run "$DOTFILES/scripts/aerospace-monitor-toggle.sh" built-in

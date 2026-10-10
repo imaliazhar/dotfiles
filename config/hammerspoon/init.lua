@@ -24,7 +24,7 @@ system_theme_watcher:setup()
 system_theme_watcher:add_listener(function(theme)
 	hs.alert.show("Theme changed to " .. theme, 1)
 
-	sh(([[~/.config/theme/scripts/set-theme.sh rose-pine %s]]):format(theme))
+	sh(([[~/.local/bin/theme %s]]):format(theme))
 end)
 
 local external_display_watcher = require("external_display_watcher")
