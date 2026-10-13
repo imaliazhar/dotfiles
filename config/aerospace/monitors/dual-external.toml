@@ -1,0 +1,14 @@
+# Left external (main): 1, right external: 0, built-in: everything else.
+# Monitor 3 is the rightmost of three, and ws 0 falls back to the built-in without it.
+[workspace-to-monitor-force-assignment]
+0 = [3, 'built-in']
+1 = 'main'
+2 = 'built-in'
+3 = 'built-in'
+4 = 'built-in'
+5 = 'built-in'
+6 = 'built-in'
+7 = 'built-in'
+8 = 'built-in'
+9 = 'built-in'
+10 = 'built-in'

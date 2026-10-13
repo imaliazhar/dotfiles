@@ -146,7 +146,7 @@ setup_dotfiles() {
   run "$DOTFILES/config/theme/theme" rose-pine dark
 
   log "Generating AeroSpace config..."
-  run "$DOTFILES/scripts/aerospace-monitor-toggle.sh" built-in
+  run "$DOTFILES/config/aerospace/monitor" built-in
 }
 
 download() {

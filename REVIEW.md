@@ -1,6 +1,6 @@
 # Dotfiles review
 
-Good patterns already in place: `aerospace-monitor-toggle.sh` (a script that builds a gitignored config from tracked pieces) and `tmux-leap` (which has its own tests).
+Good patterns already in place: `config/aerospace/monitor` (a script that builds a gitignored config from tracked pieces) and `tmux-leap` (which has its own tests).
 
 Recommended order: #4 (the password) right away, then #1 (Brewfile).
 
