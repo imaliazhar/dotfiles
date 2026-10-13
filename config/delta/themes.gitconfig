@@ -30,7 +30,7 @@
     # author: https://github.com/kvrohit
     # To configure terminal colors see https://github.com/kvrohit/mellow.nvim#terminals
     dark = true
-    syntax-theme = Catppuccin-mocha
+    syntax-theme = Catppuccin Mocha
     line-numbers = true
     side-by-side = true
     file-style = brightwhite
