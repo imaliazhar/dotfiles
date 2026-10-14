@@ -12,6 +12,13 @@ local keymap = {
 		action = wezterm.action.QuitApplication,
 	},
 
+	-- Cmd+Shift+N -> open a new window.
+	{
+		key = "n",
+		mods = "SUPER|SHIFT",
+		action = action.SpawnWindow,
+	},
+
 	-- Cmd+C -> copy the current terminal selection to the system clipboard.
 	{
 		key = "c",
