@@ -9,7 +9,7 @@
 [core]
   pager = delta
   mergeoptions = --no-edit
-	excludesfile = /Users/aliazhar.khan/.config/git/gitignore
+	excludesfile = ~/.config/git/gitignore
 [credential]
 	helper = store
 [user]
