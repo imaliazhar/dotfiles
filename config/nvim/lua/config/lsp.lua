@@ -1,8 +1,6 @@
 vim.lsp.enable("vtsls")
 -- vim.lsp.enable("tsserver")
 vim.lsp.enable("lua_ls")
--- vim.lsp.enable("denols")
--- vim.lsp.enable("fish_ls")
 vim.lsp.enable("bashls")
 
 -- Python
