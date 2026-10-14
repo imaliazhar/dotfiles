@@ -5,7 +5,6 @@ bin/*
 !bin/nvr
 !bin/slack-close
 !bin/slack-open
-!bin/tmux-fzf-session
 
 .claude/recent-files
 

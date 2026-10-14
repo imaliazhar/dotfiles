@@ -13,15 +13,12 @@ if status is-interactive
     abbr --add venv source .venv/bin/activate.fish
     abbr --add y yarn
     abbr --add lf yazi
-    abbr --add dot GIT_WORK_TREE=~ GIT_DIR=~/.dotfiles
-    abbr --add t tmux-fzf-session
     abbr --add t select-tmux-session
 
     abbr --add ga git add
     abbr --add gc git commit -m
     abbr --add gl git "log --pretty=format:'%C(yellow)%h%Creset %C(white)%s %C(dim #6e738d)%an %ar %Creset' --date=format:\"%b %d, '%y\""
     abbr --add gac git commit -am
-    abbr --add gcan git commit --amend --no-edit
     abbr --add gbr git branch
     abbr --add gpop git stash pop
     abbr --add gch git cherry-pick -e
