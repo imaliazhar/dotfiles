@@ -4,7 +4,6 @@ local theme = require("theme")
 
 local config = wezterm.config_builder()
 
--- Sync 'TERM_EMULATION' ~/.config/zsh/tmux.zsh
 -- Sync ~.local/bin/nvr
 local emulate_tmux = false
 

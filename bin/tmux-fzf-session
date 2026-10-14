@@ -102,7 +102,6 @@ if [ -z $SESSION_EXISTS ]; then
   fi
 
   # Set git env vars for dotfiles
-  # Later re-exported by ~/.config/zsh/tmux.zsh
   if [ "$FOLDER" = "dotfiles" ]; then
     tmux set-environment -t dotfiles GIT_WORK_TREE "$HOME"
     tmux set-environment -t dotfiles GIT_DIR "$HOME/.dotfiles"

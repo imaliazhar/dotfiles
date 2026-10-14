@@ -36,57 +36,11 @@ if status is-interactive
 
     abbr --add gg lazygit
 
-    # # SDKs and toolchains
-    # --------------------------------------------------------------------------
-
-    # Rust
-    if test -d $HOME/.cargo/bin
-        fish_add_path $HOME/.cargo/bin
-    end
-
-    # Work-only SDKs
-    if test (scutil --get ComputerName 2>/dev/null) = Omio-C933BE43
-        # Google Cloud SDK
-        fish_add_path /opt/homebrew/share/google-cloud-sdk/bin
-        set -gx CLOUDSDK_PYTHON /opt/homebrew/bin/python3.13
-
-        # Maestro
-        export MAESTRO_CLI_AI_MODEL=gpt-4.1
-        export MAESTRO_DRIVER_STARTUP_TIMEOUT=30000
-        fish_add_path ~/.maestro/bin
-
-        # Android SDK / Java
-        set -gx JAVA_HOME /Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
-        set -gx ANDROID_HOME $HOME/Library/Android/sdk
-        fish_add_path $ANDROID_HOME/emulator
-        fish_add_path $ANDROID_HOME/platform-tools
-
-        # PostgreSQL
-        fish_add_path /opt/homebrew/opt/postgresql@17/bin
-
-        # Ruby
-        chruby ruby-3.3.5
-    end
-
     # Shell plugins
     # --------------------------------------------------------------------------
 
     # Zoxide
     zoxide init fish | source
-
-    # FZF
-    set -gx FZF_DEFAULT_OPTS \
-        "--bind=ctrl-j:accept" \
-        --ansi \
-        "--header=" \
-        "--padding=5%" \
-        "--prompt='  '\$' '" \
-        "--pointer=▸" \
-        "--color=pointer:bright-yellow,gutter:-1,bg+:-1,fg+:bright-yellow:bold" \
-        "--gutter=' '"
-
-    # Lazygit
-    set -gx LG_CONFIG_FILE "$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/theme.yml"
 
     # Atuin
     set -gx ATUIN_NOBIND true
@@ -98,27 +52,6 @@ if status is-interactive
 
     # Notifications
     source ~/.config/fish/functions/notify_command_completion.fish
-
-    # CLI tools
-    # --------------------------------------------------------------------------
-
-    # Pi
-    set -gx PI_SKIP_VERSION_CHECK 1
-    set -gx PI_OFFLINE 1
-
-    # Environment variables
-    # --------------------------------------------------------------------------
-
-    # Load secrets if available
-    if test -f ~/.config/fish/secrets.fish
-        source ~/.config/fish/secrets.fish
-    end
-
-    set -gx EDITOR nvim
-
-    # PATH overrides
-    # --------------------------------------------------------------------------
-    fish_add_path -m ~/.local/bin
 
     # Initialize TMUX
     # --------------------------------------------------------------------------
