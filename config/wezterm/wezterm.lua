@@ -52,14 +52,20 @@ config.scrollback_lines = 5000
 config.enable_tab_bar = false
 
 config.window_background_opacity = 0.90
-config.macos_window_background_blur = 10
+config.macos_window_background_blur = 50
 config.window_close_confirmation = "NeverPrompt"
 config.native_macos_fullscreen_mode = true
-config.window_decorations = "RESIZE"
+config.window_decorations = "RESIZE|MACOS_FORCE_ENABLE_SHADOW"
 config.debug_key_events = false
 config.max_fps = 120
 
 -- Sync ~.local/bin/nvr
 config.set_environment_variables = { MUX = "tmux" }
+
+wezterm.on("window-focus-changed", function(window)
+	local overrides = window:get_config_overrides() or {}
+	overrides.window_background_opacity = window:is_focused() and config.window_background_opacity or 0.96
+	window:set_config_overrides(overrides)
+end)
 
 return config
