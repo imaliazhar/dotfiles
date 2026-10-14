@@ -420,20 +420,15 @@ setup_keyboard_shortcuts() {
 }
 
 setup_default_shell() {
-  local fish_path="/opt/homebrew/bin/fish"
+  local zsh_path="/bin/zsh"
 
-  if [[ "$SHELL" == "$fish_path" ]]; then
-    log "Fish is already the default shell"
+  if [[ "$SHELL" == "$zsh_path" ]]; then
+    log "Zsh is already the default shell"
     return 0
   fi
 
-  if ! grep -q "$fish_path" /etc/shells; then
-    log "Adding fish to /etc/shells..."
-    echo "$fish_path" | run sudo tee -a /etc/shells >/dev/null
-  fi
-
-  log "Setting fish as default shell..."
-  run sudo chsh -s "$fish_path" "$(whoami)"
+  log "Setting zsh as default shell..."
+  run sudo chsh -s "$zsh_path" "$(whoami)"
 }
 
 check_app_management_permission() {
