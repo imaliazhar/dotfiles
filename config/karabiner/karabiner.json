@@ -135,8 +135,7 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "^com\\.github\\.wez\\.wezterm$",
-                                            "^dev\\.zed\\.Zed$"
+                                            "^com\\.github\\.wez\\.wezterm$"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -162,14 +161,6 @@
                         "description": "When Caps Lock (Control) is pressed with H, it acts as Backspace.",
                         "manipulators": [
                             {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "^com\\.github\\.wez\\.wezterm$"
-                                        ],
-                                        "type": "frontmost_application_unless"
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "h",
                                     "modifiers": {
@@ -186,7 +177,6 @@
                         "description": "When Caps Lock (Control) is pressed with J, it acts as Return.",
                         "manipulators": [
                             {
-                                "conditions": [],
                                 "from": {
                                     "key_code": "j",
                                     "modifiers": { "mandatory": ["left_control"] }
