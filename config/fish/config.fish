@@ -50,9 +50,4 @@ if status is-interactive
     # Notifications
     source ~/.config/fish/functions/notify_command_completion.fish
 
-    # Initialize TMUX
-    # --------------------------------------------------------------------------
-    if test "$TERM_PROGRAM" = WezTerm
-        select-tmux-session
-    end
 end
