@@ -8,6 +8,7 @@ if status is-interactive
     abbr --add gco git checkout
     abbr --add gcb git checkout -b
     abbr --add gs git status -sb
+    abbr --add gst git diff --shortstat $(git merge-base origin/master HEAD)
     abbr --add gcan git commit --amend --no-edit
     abbr --add ls eza
     abbr --add venv source .venv/bin/activate.fish
