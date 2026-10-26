@@ -431,6 +431,23 @@ setup_default_shell() {
   run sudo chsh -s "$zsh_path" "$(whoami)"
 }
 
+setup_touch_id_sudo() {
+  local pam_file="/etc/pam.d/sudo_local"
+  # pam_reattach lets Touch ID work inside tmux
+  local config
+  config="$(printf '%s\n' \
+    "auth       optional       $(brew --prefix)/lib/pam/pam_reattach.so ignore_ssh" \
+    "auth       sufficient     pam_tid.so")"
+
+  if [[ "$(cat "$pam_file" 2>/dev/null)" == "$config" ]]; then
+    log "Touch ID for sudo already enabled"
+    return 0
+  fi
+
+  log "Enabling Touch ID for sudo..."
+  printf '%s\n' "$config" | run sudo tee "$pam_file" >/dev/null
+}
+
 check_app_management_permission() {
   local test_file="/Applications/.bootstrap_permission_check"
   if run touch "$test_file" 2>/dev/null; then
@@ -483,6 +500,7 @@ main() {
     lua-language-server \
     massren \
     neovim \
+    pam-reattach \
     ripgrep \
     sevenzip \
     stylua \
@@ -493,6 +511,7 @@ main() {
 
   run npm install -g tree-sitter-cli
 
+  setup_touch_id_sudo
   setup_default_shell
 
   install_font "Victor Mono" "https://rubjo.github.io/victor-mono/VictorMonoAll.zip"
