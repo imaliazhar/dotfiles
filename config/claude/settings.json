@@ -12,6 +12,16 @@
             "command": "~/.local/bin/ghpr-claude-state waiting"
           }
         ]
+      },
+      {
+        "matcher": "^(startup|resume|clear|compact|fork)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/aliazhar.khan/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
@@ -82,12 +92,8 @@
     "command": "sh ~/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
-    "typescript-lsp@claude-plugins-official": true,
-    "swift-lsp@claude-plugins-official": true,
     "lua-lsp@claude-plugins-official": true,
-    "gopls-lsp@claude-plugins-official": true,
-    "atlassian@claude-plugins-official": true,
-    "typesafe@typesafe-ai": true
+    "atlassian@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "typesafe-ai": {
@@ -98,6 +104,11 @@
     }
   },
   "effortLevel": "xhigh",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "autoCompactWindow": 400000
+    }
+  },
   "tui": "default",
   "voice": {
     "enabled": true,
