@@ -96,6 +96,7 @@ clone_dotfiles_repo() {
 setup_dirs() {
   run mkdir -p "$DIR"
   run mkdir -p "$APP_INSTALLERS_DIR"
+  run mkdir -p "$HOME/Projects"
 }
 
 install_homebrew() {
