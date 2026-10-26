@@ -21,6 +21,17 @@ local keymap = {
 		action = action.SpawnWindow,
 	},
 
+	-- Cmd+Shift+W -> close the current window and all of its tabs without confirmation.
+	{
+		key = "w",
+		mods = "SUPER|SHIFT",
+		action = wezterm.action_callback(function(window, pane)
+			for _ = 1, #window:mux_window():tabs() do
+				window:perform_action(action.CloseCurrentTab({ confirm = false }), pane)
+			end
+		end),
+	},
+
 	-- Cmd+C -> copy the current terminal selection to the system clipboard.
 	{
 		key = "c",
