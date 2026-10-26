@@ -316,13 +316,13 @@ install_mac_app_from_gh_releases() {
 
   download_url="$(
     jq -r '
-      [.assets[] | select(.name | test("macos|darwin"; "i") and test("\\.(dmg|zip)$"; "i"))]
+      [.assets[] | select(.name | test("\\.(dmg|zip)$"; "i") and (test("windows|win32|win64|linux"; "i") | not))]
       | sort_by(
-          (if .name | test("\\.dmg$"; "i") then 0 else 1 end),
           (if .name | test("macos"; "i") then 0
-           elif .name | test("darwin"; "i") then 1 else 2 end)
+           elif .name | test("darwin"; "i") then 1 else 2 end),
+          (if .name | test("\\.dmg$"; "i") then 0 else 1 end)
         )
-      | .[0].browser_download_url
+      | .[0].browser_download_url // empty
     ' <<<"$release_json"
   )"
 
@@ -500,6 +500,7 @@ main() {
     lua-language-server \
     massren \
     neovim \
+    node \
     pam-reattach \
     ripgrep \
     sevenzip \
@@ -524,9 +525,11 @@ main() {
   install_mac_app_from_url "WhatsApp" "https://web.whatsapp.com/desktop/mac_native/release/?configuration=Release&src=whatsapp_downloads_page"
 
   install_mac_app_from_gh_releases "Wezterm" "https://github.com/wezterm/wezterm"
-  install_mac_app_from_gh_releases "Karabiner" "https://github.com/pqrs-org/Karabiner-Elements"
   install_mac_app_from_gh_releases "Hammerspoon" "https://github.com/Hammerspoon/hammerspoon"
   install_mac_app_from_gh_releases "IINA" "https://github.com/iina/iina"
+
+  # Karabiner ships a .pkg and AeroSpace has no DMG release, so use casks
+  run brew install --cask karabiner-elements nikitabobko/tap/aerospace
 
   setup_dock
   setup_keyboard_shortcuts
