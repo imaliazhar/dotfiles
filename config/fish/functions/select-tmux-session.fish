@@ -20,8 +20,8 @@ function select-tmux-session --description 'FZF-based tmux session picker'
         set -a active_status_list true
     end
 
-    set misc_sessions home dotfiles obsidian
-    set misc_session_dirs_list $HOME $HOME/Dotfiles "$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/Gringotts"
+    set misc_sessions home dotfiles homelab obsidian
+    set misc_session_dirs_list $HOME $HOME/Dotfiles $HOME/Homelab "$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/Gringotts"
     #
     for i in (seq (count $misc_sessions))
         if contains $misc_sessions[$i] $session_names_list
@@ -91,7 +91,7 @@ function select-tmux-session --description 'FZF-based tmux session picker'
         tmux new-session $tmux_args
 
         if test "$selected_session" = home
-            tmux rename-window -t $selected_session:1 claude
+            tmux rename-window -t $selected_session:1 agent
             tmux send-keys -t $selected_session:1.1 claude Enter
         else
             tmux send-keys -t $selected_session:1.1 $EDITOR Enter
