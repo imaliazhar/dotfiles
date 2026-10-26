@@ -11,7 +11,9 @@ M.create_workspaces = function()
 		Dotfiles = home .. "/.config",
 	}
 
-	for _, path in ipairs(wezterm.read_dir(home .. "/Projects")) do
+	local ok, projects = pcall(wezterm.read_dir, home .. "/Projects")
+
+	for _, path in ipairs(ok and projects or {}) do
 		local basename = path:match("([^/]+)$")
 		workspaces[basename] = path
 	end

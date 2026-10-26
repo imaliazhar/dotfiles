@@ -508,7 +508,8 @@ main() {
     tmux \
     trash \
     yazi \
-    zig
+    zig \
+    zoxide
 
   run npm install -g tree-sitter-cli
 
