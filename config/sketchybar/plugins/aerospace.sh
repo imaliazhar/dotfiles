@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 
-case $FOCUSED_WORKSPACE in
-0) label="Term" ;;
-1) label="Arc" ;;
+# aerospace_workspace_change passes FOCUSED_WORKSPACE; other events (startup,
+# front_app_switched) don't, so ask AeroSpace instead.
+workspace="${FOCUSED_WORKSPACE:-$(aerospace list-workspaces --focused 2>/dev/null)}"
+
+case $workspace in
+0) label="Code" ;;
+1) label="Web" ;;
 2) label="App" ;;
 3) label="Slack" ;;
-9) label="Whatsapp" ;;
-10) label="Lemon" ;;
-*) label="Desktop $FOCUSED_WORKSPACE" ;;
+9) label="Chat" ;;
+10) label="AI" ;;
+*) label="Desktop $workspace" ;;
 esac
 
-$BAR_NAME --set aerospace label="$label"
+$BAR_NAME --set "$NAME" label="$label"

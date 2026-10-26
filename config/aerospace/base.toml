@@ -16,9 +16,9 @@ start-at-login = true
 
 # Notify Sketchybar about workspace change
 exec-on-workspace-change = [
-  # '/bin/bash',
-  # '-c',
-  # 'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
+  '/bin/bash',
+  '-c',
+  'PATH=/opt/homebrew/bin:/usr/local/bin:$PATH sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
 ]
 on-focus-changed = ['move-mouse window-lazy-center']
 

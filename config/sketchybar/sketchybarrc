@@ -6,9 +6,8 @@
 PLUGIN_DIR="$CONFIG_DIR/plugins"
 
 
-killall stats_provider
-# Update with path to stats_provider
-$HOME/.local/bin/stats_provider --cpu usage --disk usage --memory ram_usage --interval 1 --bar $BAR_NAME &
+killall stats_provider 2>/dev/null
+stats_provider --cpu usage --disk usage --memory ram_usage --interval 1 --bar $BAR_NAME &
 
 ##### Bar Appearance #####
 # Configuring the general appearance of the bar.
@@ -21,14 +20,20 @@ $HOME/.local/bin/stats_provider --cpu usage --disk usage --memory ram_usage --in
 # ln -s $(which sketchybar) $(dirname $(which sketchybar))/bottom_bar
 # ln -s ~/Dotfiles/config/sketchybar ~/Dotfiles/config/bottom_bar
 
+# The top bar follows the external display; the bottom bar is only shown when a
+# second monitor is connected. Hammerspoon re-applies this when displays change.
+DISPLAY_COUNT=$($BAR_NAME --query displays | grep -c arrangement-id)
+
 POSITION="top"
-DISPLAY_ID="2"
+DISPLAY_ID="$DISPLAY_COUNT"
+HIDDEN="off"
 if [ "$BAR_NAME" = "bottom_bar" ]; then
   POSITION="bottom"
   DISPLAY_ID="main"
+  [ "$DISPLAY_COUNT" -gt 1 ] || HIDDEN="on"
 fi
 
-$BAR_NAME --bar position=$POSITION height=32 color=0xFF000000 padding_left=16 padding_right=16 display=$DISPLAY_ID
+$BAR_NAME --bar position=$POSITION height=32 color=0xFF000000 padding_left=16 padding_right=16 display=$DISPLAY_ID hidden=$HIDDEN
 
 ##### Changing Defaults #####
 # We now change some default values, which are applied to all further items.
@@ -64,26 +69,27 @@ $BAR_NAME \
            --add item clock right \
            --set clock update_freq=10 script="$PLUGIN_DIR/clock.sh" \
            --add event aerospace_workspace_change \
+           --add event system_stats \
            --add item aerospace left \
            --set aerospace script="$PLUGIN_DIR/aerospace.sh" \
-           --subscribe aerospace aerospace_workspace_change \
+           --subscribe aerospace front_app_switched aerospace_workspace_change \
            --add item app left \
            --set app script="$PLUGIN_DIR/aerospace-app.sh" \
-           --subscribe app aerospace_workspace_change \
+           --subscribe app front_app_switched aerospace_workspace_change \
            --set app label.color=0x65FFFFFF \
            --add item battery right \
            --set battery update_freq=120 script="$PLUGIN_DIR/battery.sh" \
            --subscribe battery system_woke power_source_change \
            --add item cpu_usage right \
-           --set cpu_usage script="${BAR_NAME} --set cpu_usage label=⚙\ \$CPU_USAGE" \
+           --set cpu_usage icon=󰻠 script="$PLUGIN_DIR/stats.sh" \
            --subscribe cpu_usage system_stats \
            --add item ram_usage right \
-           --set ram_usage script="${BAR_NAME} --set ram_usage label=▦\ \$RAM_USAGE" \
+           --set ram_usage icon=󰍛 script="$PLUGIN_DIR/stats.sh" \
            --subscribe ram_usage system_stats \
            --add item disk_usage right \
-           --set disk_usage script="$BAR_NAME --set disk_usage label=◻\ \$DISK_USAGE" \
+           --set disk_usage icon=󰋊 script="$PLUGIN_DIR/stats.sh" \
            --subscribe disk_usage system_stats \
-           --set /_usage/ label.color=0x65FFFFFF
+           --set /_usage/ label.color=0x65FFFFFF icon.color=0x65FFFFFF icon.font="Hack Nerd Font:Regular:14.0" icon.padding_right=4 label.width=32 label.align=left padding_left=3 padding_right=3
 
 ##### Force all scripts to run the first time (never do this in a script) #####
 $BAR_NAME --update

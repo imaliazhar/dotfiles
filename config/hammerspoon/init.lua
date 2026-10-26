@@ -29,9 +29,11 @@ end)
 
 local external_display_watcher = require("external_display_watcher")
 
--- Start the status bars.
-sh("nohup sketchybar >/dev/null 2>&1 &")
-sh("nohup bottom_bar >/dev/null 2>&1 &")
+-- (Re)start the status bars. They are detached from Hammerspoon, so a previous
+-- instance survives a Hammerspoon restart and would block the new one from starting.
+for _, bar in ipairs({ "sketchybar", "bottom_bar" }) do
+	sh(([[killall %s 2>/dev/null; while pgrep -x %s >/dev/null; do sleep 0.1; done; nohup %s >/dev/null 2>&1 &]]):format(bar, bar, bar))
+end
 
 -- The top bar follows the external display; the bottom bar is only shown when a
 -- second monitor is connected. Retries so the bar daemons have time to start.

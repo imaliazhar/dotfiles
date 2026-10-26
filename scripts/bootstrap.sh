@@ -489,6 +489,7 @@ main() {
     eza \
     fd \
     felixkratz/formulae/sketchybar \
+    joncrangle/tap/sketchybar-system-stats \
     fish \
     figlet \
     fzf \
@@ -531,7 +532,7 @@ main() {
   install_mac_app_from_gh_releases "IINA" "https://github.com/iina/iina"
 
   # Karabiner ships a .pkg and AeroSpace has no DMG release, so use casks
-  run brew install --cask karabiner-elements nikitabobko/tap/aerospace
+  run brew install --cask karabiner-elements nikitabobko/tap/aerospace font-hack-nerd-font
 
   setup_dock
   setup_keyboard_shortcuts
