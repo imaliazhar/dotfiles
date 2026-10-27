@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Switch lazygit, yazi, wezterm, tmux, nvim and Claude Code to a theme.
+# Switch lazygit, yazi, wezterm, tmux, nvim, sketchybar and Claude Code to a theme.
 #
 # Usage: theme              pick a theme and mode with fzf
 #        theme NAME MODE    e.g. theme rose-pine dark
@@ -57,6 +57,7 @@ link "yazi/$mode" "$CONFIG/yazi/flavors/theme.yazi"
 link "wezterm/$mode.lua" "$CONFIG/wezterm/theme.lua"
 link "tmux/$mode.tmux" "$CONFIG/tmux/theme.tmux"
 link "nvim/$mode.lua" "$CONFIG/nvim/theme.lua"
+link "sketchybar/$mode.sh" "$CONFIG/sketchybar/theme.sh"
 # Selected in Claude Code with /theme as custom:current
 link "claude/$mode.json" "$HOME/.claude/themes/current.json"
 
@@ -67,6 +68,7 @@ echo "Switched to $name $mode"
 touch "$CONFIG/wezterm/wezterm.lua"
 
 tmux source-file "$CONFIG/tmux/tmux.conf" 2>/dev/null || true
+sketchybar --reload 2>/dev/null || true
 
 pids=()
 for socket in "${TMPDIR:-/tmp/}"nvim."$USER"/*/nvim.*; do

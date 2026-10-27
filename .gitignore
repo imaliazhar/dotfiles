@@ -46,3 +46,4 @@ config/yazi/flavors/theme.yazi
 config/wezterm/theme.lua
 config/tmux/theme.tmux
 config/nvim/theme.lua
+config/sketchybar/theme.sh
