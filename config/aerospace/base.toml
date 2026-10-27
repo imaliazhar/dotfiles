@@ -63,13 +63,17 @@ preset = 'qwerty'
 #                 In this example, 24 is a default value when there is no match.
 #                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
 #                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
+# 5pt everywhere, matching the space around sketchybar's pills. The top bar is
+# 36pt tall; the built-in display already reserves 32pt for the notch, so it only
+# needs 6 more (4 to clear the bar plus 2 for the pills' shadow). External
+# displays leave 31pt at the bottom for bottom_bar.
 [gaps]
-# inner.horizontal = 10
-# inner.vertical =   10
-# outer.left =       18
-# outer.top =     18
-outer.bottom = [{ monitor."Built-in Retina Display" = 0 }, 31]
-# outer.right =      18
+inner.horizontal = 5
+inner.vertical =   5
+outer.left =       5
+outer.top =        [{ monitor."Built-in Retina Display" = 6 }, 43]
+outer.bottom =     [{ monitor."Built-in Retina Display" = 5 }, 31]
+outer.right =      5
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
