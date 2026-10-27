@@ -4,10 +4,5 @@
 # the item invoking this script:
 # https://felixkratz.github.io/SketchyBar/config/events#events-and-scripting
 
-FORMAT="+%-I:%M" # default (top bar)
-
-if [ "$BAR_NAME" = "bottom_bar" ]; then
-  FORMAT="+%a %d. %b %-I:%M%p"
-fi
-
-$BAR_NAME --set "$NAME" label="$(date "$FORMAT")"
+# The date sits in the icon slot so it can be dimmed next to the time.
+$BAR_NAME --set "$NAME" icon="$(date "+%a %-d %b")" label="$(date "+%-I:%M")"

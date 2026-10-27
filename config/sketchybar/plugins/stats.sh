@@ -15,7 +15,9 @@ esac
 
 PERCENT="${VALUE%\%}"
 
-COLOR=0x65FFFFFF # normal
+source "$CONFIG_DIR/theme.sh"
+
+COLOR=$DIM_COLOR # normal
 if [ "$PERCENT" -ge "$3" ] 2>/dev/null; then
   COLOR=0xFFF38BA8 # red
 elif [ "$PERCENT" -ge "$2" ] 2>/dev/null; then

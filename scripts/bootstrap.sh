@@ -504,6 +504,7 @@ main() {
     neovim \
     node \
     pam-reattach \
+    media-control \
     ripgrep \
     sevenzip \
     stylua \

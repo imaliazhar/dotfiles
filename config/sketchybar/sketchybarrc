@@ -5,9 +5,14 @@
 
 PLUGIN_DIR="$CONFIG_DIR/plugins"
 
+# Colors from the current theme (linked by config/theme/theme)
+source "$CONFIG_DIR/theme.sh"
+
 
 killall stats_provider 2>/dev/null
-stats_provider --cpu usage --disk usage --memory ram_usage --interval 1 --bar $BAR_NAME &
+# Network speed is reported for whichever interface currently has the default route
+NETWORK_INTERFACE="$(route get default 2>/dev/null | awk '/interface:/ { print $2 }')"
+stats_provider --cpu usage --disk usage --memory ram_usage ${NETWORK_INTERFACE:+--network $NETWORK_INTERFACE} --interval 1 --bar $BAR_NAME &
 
 ##### Bar Appearance #####
 # Configuring the general appearance of the bar.
@@ -33,7 +38,8 @@ if [ "$BAR_NAME" = "bottom_bar" ]; then
   [ "$DISPLAY_COUNT" -gt 1 ] || HIDDEN="on"
 fi
 
-$BAR_NAME --bar position=$POSITION height=32 color=0xFF000000 padding_left=16 padding_right=16 display=$DISPLAY_ID hidden=$HIDDEN
+# The bar itself is transparent; each section sits in its own blurred pill (see Pills below).
+$BAR_NAME --bar position=$POSITION height=36 color=0x00000000 padding_left=5 padding_right=5 display=$DISPLAY_ID hidden=$HIDDEN
 
 ##### Changing Defaults #####
 # We now change some default values, which are applied to all further items.
@@ -45,8 +51,8 @@ default=(
   padding_right=5
   icon.font="Hack Nerd Font:Bold:17.0"
   label.font="Roboto:Medium:13.0"
-  icon.color=0xFFFFFFFF
-  label.color=0xFFFFFFFF
+  icon.color=$TEXT_COLOR
+  label.color=$TEXT_COLOR
   icon.padding_left=0
   icon.padding_right=0
   label.padding_left=0
@@ -65,6 +71,18 @@ $BAR_NAME --default "${default[@]}"
 # volume is registered. More info about the event system can be found here:
 # https://felixkratz.github.io/SketchyBar/config/events
 
+# Fixed-width, dimmed download/upload speeds (see network.sh)
+network_item=(
+  label.color=$DIM_COLOR
+  icon.color=$DIM_COLOR
+  icon.font="Hack Nerd Font:Regular:14.0"
+  icon.padding_right=4
+  label.width=40
+  label.align=left
+  padding_left=3
+  padding_right=3
+)
+
 $BAR_NAME \
            --add item clock right \
            --set clock update_freq=10 script="$PLUGIN_DIR/clock.sh" \
@@ -76,9 +94,9 @@ $BAR_NAME \
            --add item app left \
            --set app script="$PLUGIN_DIR/aerospace-app.sh" \
            --subscribe app front_app_switched aerospace_workspace_change \
-           --set app label.color=0x65FFFFFF \
+           --set app label.color=$DIM_COLOR \
            --add item battery right \
-           --set battery update_freq=120 script="$PLUGIN_DIR/battery.sh" \
+           --set battery update_freq=120 script="$PLUGIN_DIR/battery.sh" icon.font="Hack Nerd Font:Regular:14.0" icon.padding_right=4 \
            --subscribe battery system_woke power_source_change \
            --add item cpu_usage right \
            --set cpu_usage icon=󰻠 script="$PLUGIN_DIR/stats.sh" \
@@ -89,8 +107,108 @@ $BAR_NAME \
            --add item disk_usage right \
            --set disk_usage icon=󰋊 script="$PLUGIN_DIR/stats.sh" \
            --subscribe disk_usage system_stats \
-           --set /_usage/ label.color=0x65FFFFFF icon.color=0x65FFFFFF icon.font="Hack Nerd Font:Regular:14.0" icon.padding_right=4 label.width=32 label.align=left padding_left=3 padding_right=3
+           --add item net_up right \
+           --set net_up icon=󰕒 script="$PLUGIN_DIR/network.sh" \
+           --subscribe net_up system_stats \
+           --add item net_down right \
+           --set net_down icon=󰇚 script="$PLUGIN_DIR/network.sh" \
+           --subscribe net_down system_stats \
+           --set net_up "${network_item[@]}" \
+           --set net_down "${network_item[@]}" \
+           --add item media left \
+           --set media drawing=off icon.font="Hack Nerd Font:Regular:14.0" icon.padding_right=6 \
+                       label.color=$DIM_COLOR icon.color=$DIM_COLOR \
+                       click_script="media-control toggle-play-pause" \
+           --set /_usage/ label.color=$DIM_COLOR icon.color=$DIM_COLOR icon.font="Hack Nerd Font:Regular:14.0" icon.padding_right=4 label.width=32 label.align=left padding_left=3 padding_right=3
+
+##### Pills #####
+# Brackets draw one background behind a group of items. The padding on each
+# group's outer items is the space inside the pill; their item padding is the
+# gap between pills.
+pill=(
+  background.color=$PILL_COLOR
+  background.corner_radius=8
+  background.height=26
+  background.shadow.drawing=on
+  background.shadow.color=0x66000000
+  background.shadow.angle=90
+  background.shadow.distance=2
+  blur_radius=50
+)
+
+# Items on a pill's edge get no outer padding, so the icon/label padding of 12
+# is exactly the space inside every pill.
+
+# Workspaces pill: one item per AeroSpace workspace. aerospace.sh (run by the
+# hidden aerospace item) shows only occupied workspaces, as dim numbers, plus the
+# focused one, bright and by name. Clicking one switches to it. ws_start and
+# ws_end pad the pill's edges, since the first and last visible items change.
+WORKSPACES=(0 1 2 3 4 5 6 7 8 9 10)
+workspace_items=(ws_start)
+$BAR_NAME --set aerospace drawing=off \
+          --add item ws_start left \
+          --set ws_start width=12 padding_left=0 padding_right=0 \
+          --move ws_start before aerospace
+for ws in "${WORKSPACES[@]}"; do
+  $BAR_NAME --add item ws.$ws left \
+            --set ws.$ws drawing=off padding_left=0 padding_right=0 \
+                         icon.font="Roboto:Medium:13.0" icon.padding_right=8 \
+                         click_script="aerospace workspace $ws" \
+            --move ws.$ws before aerospace
+  workspace_items+=(ws.$ws)
+done
+# ws_end tops up the last item's 8pt to the 12pt edge padding; ws_gap separates the pills.
+$BAR_NAME --add item ws_end left \
+          --set ws_end width=4 padding_left=0 padding_right=0 \
+          --move ws_end before aerospace \
+          --add item ws_gap left \
+          --set ws_gap width=8 padding_left=0 padding_right=0 \
+          --move ws_gap before aerospace
+workspace_items+=(ws_end)
+
+# App pill: the focused app's name. It hides itself when the workspace is empty,
+# see aerospace-app.sh.
+$BAR_NAME \
+           --add bracket spaces "${workspace_items[@]}" \
+           --set spaces "${pill[@]}" \
+           --set app padding_left=0 padding_right=0 label.padding_left=12 label.padding_right=12 \
+           --add bracket front_app app \
+           --set front_app "${pill[@]}" \
+           --set disk_usage padding_left=0 icon.padding_left=12 \
+           --set cpu_usage padding_right=0 label.padding_right=12 \
+           --add bracket stats cpu_usage ram_usage disk_usage \
+           --set stats "${pill[@]}" \
+           --set net_down padding_left=0 icon.padding_left=12 \
+           --set net_up padding_right=0 label.padding_right=12 \
+           --add bracket network net_up net_down \
+           --set network "${pill[@]}" \
+           --set media padding_left=0 padding_right=0 icon.padding_left=12 label.padding_right=12 \
+           --add bracket now_playing media \
+           --set now_playing "${pill[@]}" \
+           --add item media_gap left \
+           --set media_gap drawing=off width=8 padding_left=0 padding_right=0 \
+           --move media_gap before media \
+           --add item net_gap right \
+           --set net_gap width=8 padding_left=0 padding_right=0 \
+           --move net_gap after disk_usage \
+           --add item pill_gap right \
+           --set pill_gap width=8 padding_left=0 padding_right=0 \
+           --move pill_gap after battery \
+           --set battery padding_left=0 padding_right=0 icon.padding_left=12 label.padding_right=12 \
+           --add bracket power battery \
+           --set power "${pill[@]}" \
+           --add item clock_gap right \
+           --set clock_gap width=8 padding_left=0 padding_right=0 \
+           --move clock_gap after clock \
+           --set clock icon.font="Roboto:Medium:13.0" icon.color=$DIM_COLOR icon.padding_left=12 icon.padding_right=8 \
+                       padding_left=0 padding_right=0 label.padding_right=12 \
+           --add bracket datetime clock \
+           --set datetime "${pill[@]}"
 
 ##### Force all scripts to run the first time (never do this in a script) #####
 $BAR_NAME --update
 $BAR_NAME --hotload on
+
+# Now playing updates come from a long-running media-control stream (see
+# media.sh). Started last so its first update lands on the finished items.
+"$PLUGIN_DIR/media.sh" $BAR_NAME &

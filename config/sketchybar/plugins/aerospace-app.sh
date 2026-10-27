@@ -8,10 +8,9 @@ else
   app=$(aerospace list-windows --focused --json 2>/dev/null | jq -r '.[0]["app-name"] // empty')
 fi
 
-label=""
-
-if [[ -n "$app" ]]; then
-  label="/   $app"
+# With no app, hide the item, and with it the app pill.
+if [[ -z "$app" ]]; then
+  $BAR_NAME --set "$NAME" drawing=off
+else
+  $BAR_NAME --set "$NAME" drawing=on label="$app"
 fi
-
-$BAR_NAME --set "$NAME" label="$label"
