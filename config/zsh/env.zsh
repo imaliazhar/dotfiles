@@ -4,7 +4,7 @@
 
 typeset -U path
 
-[[ $(scutil --get ComputerName 2>/dev/null) == Omio-C933BE43 ]] && work_machine=1
+[[ $(scutil --get ComputerName 2>/dev/null) == Omio-A594D181 ]] && work_machine=1
 
 
 # General
