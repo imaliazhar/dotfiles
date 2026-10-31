@@ -173,6 +173,20 @@ download() {
     return 0
   fi
 
+  # URLs without a filename in the path (e.g. WhatsApp's /release/?...) redirect to the
+  # real file, so take the name from the final URL instead
+  local path="${url%%\?*}"
+  if [[ "${path##*/}" != *.* ]]; then
+    local final_url
+    final_url="$(curl -sIL -o /dev/null -w "%{url_effective}" "$url")"
+    final_url="${final_url%%\?*}"
+    local filename="${final_url##*/}"
+
+    run curl -L -o "$filename" "$url"
+    echo "$filename"
+    return 0
+  fi
+
   run curl -LOJ -w "%{filename_effective}" "$url"
 }
 
@@ -497,6 +511,7 @@ main() {
     fd \
     felixkratz/formulae/sketchybar \
     joncrangle/tap/sketchybar-system-stats \
+    media-control \
     blueutil \
     fish \
     figlet \
@@ -512,7 +527,6 @@ main() {
     neovim \
     node \
     pam-reattach \
-    media-control \
     ripgrep \
     sevenzip \
     stylua \
