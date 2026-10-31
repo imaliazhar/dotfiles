@@ -553,6 +553,9 @@ main() {
     "Hammerspoon" \
     "AeroSpace"
 
+  # Hammerspoon starts sketchybar, so the headphones button's Bluetooth access is
+  # granted to Hammerspoon. macOS only lets you do that by hand.
+  log "For sketchybar's headphones button, allow Hammerspoon in: System Settings → Privacy & Security → Bluetooth"
   log "Bootstrap complete. Log out and log back in for all changes to take effect."
 }
 
