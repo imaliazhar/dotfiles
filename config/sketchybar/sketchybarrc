@@ -102,14 +102,14 @@ $BAR_NAME \
            --set battery update_freq=120 script="$PLUGIN_DIR/battery.sh" icon.font="Hack Nerd Font:Regular:14.0" icon.padding_right=4 \
            --subscribe battery system_woke power_source_change \
            --add item disk_usage e \
-           --set disk_usage icon=󰋊 script="$PLUGIN_DIR/stats.sh" \
-           --subscribe disk_usage system_stats \
+           --set disk_usage script="$PLUGIN_DIR/stats.sh" \
+           --subscribe disk_usage system_stats mouse.clicked \
            --add item ram_usage e \
-           --set ram_usage icon=󰍛 script="$PLUGIN_DIR/stats.sh" \
-           --subscribe ram_usage system_stats \
+           --set ram_usage script="$PLUGIN_DIR/stats.sh" \
+           --subscribe ram_usage system_stats mouse.clicked \
            --add item cpu_usage e \
-           --set cpu_usage icon=󰻠 script="$PLUGIN_DIR/stats.sh" \
-           --subscribe cpu_usage system_stats \
+           --set cpu_usage script="$PLUGIN_DIR/stats.sh" \
+           --subscribe cpu_usage system_stats mouse.clicked \
            --add item net_up q \
            --set net_up icon=󰕒 script="$PLUGIN_DIR/network.sh" \
            --subscribe net_up system_stats \
