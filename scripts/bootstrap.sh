@@ -490,6 +490,7 @@ main() {
     fd \
     felixkratz/formulae/sketchybar \
     joncrangle/tap/sketchybar-system-stats \
+    blueutil \
     fish \
     figlet \
     fzf \

@@ -197,6 +197,17 @@ $BAR_NAME \
            --set battery padding_left=0 padding_right=0 icon.padding_left=12 label.padding_right=12 \
            --add bracket power battery \
            --set power "${pill[@]}" \
+           --add item headphones right \
+           --set headphones update_freq=30 script="$PLUGIN_DIR/headphones.sh" \
+                            icon.font="Hack Nerd Font:Regular:14.0" icon.padding_left=12 icon.padding_right=12 \
+                            label.color=$DIM_COLOR label.padding_right=12 padding_left=0 padding_right=0 \
+           --subscribe headphones mouse.clicked system_woke \
+           --move headphones after pill_gap \
+           --add bracket bluetooth headphones \
+           --set bluetooth "${pill[@]}" \
+           --add item headphones_gap right \
+           --set headphones_gap width=8 padding_left=0 padding_right=0 \
+           --move headphones_gap after headphones \
            --add item clock_gap right \
            --set clock_gap width=8 padding_left=0 padding_right=0 \
            --move clock_gap after clock \
