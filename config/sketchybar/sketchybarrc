@@ -39,7 +39,10 @@ if [ "$BAR_NAME" = "bottom_bar" ]; then
 fi
 
 # The bar itself is transparent; each section sits in its own blurred pill (see Pills below).
-$BAR_NAME --bar position=$POSITION height=36 color=0x00000000 padding_left=5 padding_right=5 display=$DISPLAY_ID hidden=$HIDDEN
+# Network sits left of the notch and system stats right of it ("q" and "e"
+# positions). notch_width is the 185pt notch plus a 5pt gap on each side,
+# matching the bar and window gaps.
+$BAR_NAME --bar position=$POSITION height=36 color=0x00000000 padding_left=5 padding_right=5 display=$DISPLAY_ID hidden=$HIDDEN notch_width=195
 
 ##### Changing Defaults #####
 # We now change some default values, which are applied to all further items.
@@ -98,19 +101,19 @@ $BAR_NAME \
            --add item battery right \
            --set battery update_freq=120 script="$PLUGIN_DIR/battery.sh" icon.font="Hack Nerd Font:Regular:14.0" icon.padding_right=4 \
            --subscribe battery system_woke power_source_change \
-           --add item cpu_usage right \
-           --set cpu_usage icon=󰻠 script="$PLUGIN_DIR/stats.sh" \
-           --subscribe cpu_usage system_stats \
-           --add item ram_usage right \
-           --set ram_usage icon=󰍛 script="$PLUGIN_DIR/stats.sh" \
-           --subscribe ram_usage system_stats \
-           --add item disk_usage right \
+           --add item disk_usage e \
            --set disk_usage icon=󰋊 script="$PLUGIN_DIR/stats.sh" \
            --subscribe disk_usage system_stats \
-           --add item net_up right \
+           --add item ram_usage e \
+           --set ram_usage icon=󰍛 script="$PLUGIN_DIR/stats.sh" \
+           --subscribe ram_usage system_stats \
+           --add item cpu_usage e \
+           --set cpu_usage icon=󰻠 script="$PLUGIN_DIR/stats.sh" \
+           --subscribe cpu_usage system_stats \
+           --add item net_up q \
            --set net_up icon=󰕒 script="$PLUGIN_DIR/network.sh" \
            --subscribe net_up system_stats \
-           --add item net_down right \
+           --add item net_down q \
            --set net_down icon=󰇚 script="$PLUGIN_DIR/network.sh" \
            --subscribe net_down system_stats \
            --set net_up "${network_item[@]}" \
@@ -188,9 +191,6 @@ $BAR_NAME \
            --add item media_gap left \
            --set media_gap drawing=off width=8 padding_left=0 padding_right=0 \
            --move media_gap before media \
-           --add item net_gap right \
-           --set net_gap width=8 padding_left=0 padding_right=0 \
-           --move net_gap after disk_usage \
            --add item pill_gap right \
            --set pill_gap width=8 padding_left=0 padding_right=0 \
            --move pill_gap after battery \
