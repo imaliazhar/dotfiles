@@ -125,7 +125,7 @@ alt-shift-l = 'move right'
 alt-shift-minus = 'resize smart -50'
 alt-shift-equal = 'resize smart +50'
 
-alt-f = 'fullscreen'
+# alt-f = 'fullscreen' # freed for shell M-f (forward word)
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 cmd-backtick = 'workspace 0'
