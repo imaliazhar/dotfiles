@@ -527,6 +527,7 @@ main() {
     neovim \
     node \
     pam-reattach \
+    poppler \
     ripgrep \
     sevenzip \
     stylua \
