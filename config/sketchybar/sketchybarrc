@@ -208,6 +208,17 @@ $BAR_NAME \
            --add item headphones_gap right \
            --set headphones_gap width=8 padding_left=0 padding_right=0 \
            --move headphones_gap after headphones \
+           --add item wifi right \
+           --set wifi update_freq=30 script="$PLUGIN_DIR/wifi.sh" \
+                      icon.font="Hack Nerd Font:Regular:14.0" icon.padding_left=12 icon.padding_right=6 \
+                      label.padding_right=12 padding_left=0 padding_right=0 \
+           --subscribe wifi wifi_change system_woke \
+           --move wifi after headphones_gap \
+           --add bracket wifi_status wifi \
+           --set wifi_status "${pill[@]}" \
+           --add item wifi_gap right \
+           --set wifi_gap width=8 padding_left=0 padding_right=0 \
+           --move wifi_gap after wifi \
            --add item clock_gap right \
            --set clock_gap width=8 padding_left=0 padding_right=0 \
            --move clock_gap after clock \

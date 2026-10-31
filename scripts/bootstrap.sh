@@ -449,6 +449,13 @@ setup_touch_id_sudo() {
   printf '%s\n' "$config" | run sudo tee "$pam_file" >/dev/null
 }
 
+setup_wifi_names() {
+  # macOS shows every Wi-Fi network as <redacted> on the command line unless this is
+  # on. sketchybar's wifi.sh needs the name to hide itself on the home network.
+  log "Unhiding Wi-Fi network names..."
+  run sudo ipconfig setverbose 1
+}
+
 check_app_management_permission() {
   local test_file="/Applications/.bootstrap_permission_check"
   if run touch "$test_file" 2>/dev/null; then
@@ -519,6 +526,7 @@ main() {
 
   setup_touch_id_sudo
   setup_default_shell
+  setup_wifi_names
 
   install_font "Victor Mono" "https://rubjo.github.io/victor-mono/VictorMonoAll.zip"
 
