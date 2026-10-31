@@ -66,13 +66,14 @@ preset = 'qwerty'
 # 5pt everywhere, matching the space around sketchybar's pills. The top bar is
 # 36pt tall; the built-in display already reserves 32pt for the notch, so it only
 # needs 6 more (4 to clear the bar plus 2 for the pills' shadow). External
-# displays leave 31pt at the bottom for bottom_bar.
+# displays have no bar (the top bar moves to the built-in when one is connected),
+# so they get plain 5pt gaps on every side.
 [gaps]
 inner.horizontal = 5
 inner.vertical =   5
 outer.left =       5
-outer.top =        [{ monitor."Built-in Retina Display" = 6 }, 43]
-outer.bottom =     [{ monitor."Built-in Retina Display" = 5 }, 31]
+outer.top =        [{ monitor."Built-in Retina Display" = 6 }, 5]
+outer.bottom =     5
 outer.right =      5
 
 # 'main' binding mode declaration
