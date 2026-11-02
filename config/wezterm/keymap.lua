@@ -270,23 +270,23 @@ local tmux = {
 		}),
 	},
 
-	-- Cmd+Shift+L -> tmux prefix + >: move the current tmux window one index right.
+	-- Cmd+Shift+L -> tmux prefix + n: switch to the next tmux window (same as Cmd+L).
 	{
 		key = "l",
 		mods = "SUPER|SHIFT",
 		action = action.Multiple({
 			action.SendKey({ key = "`" }),
-			action.SendKey({ key = ">" }),
+			action.SendKey({ key = "n" }),
 		}),
 	},
 
-	-- Cmd+Shift+H -> tmux prefix + <: move the current tmux window one index left.
+	-- Cmd+Shift+H -> tmux prefix + p: switch to the previous tmux window (same as Cmd+H).
 	{
 		key = "h",
 		mods = "SUPER|SHIFT",
 		action = action.Multiple({
 			action.SendKey({ key = "`" }),
-			action.SendKey({ key = "<" }),
+			action.SendKey({ key = "p" }),
 		}),
 	},
 
@@ -382,21 +382,6 @@ local tmux = {
 	},
 }
 
-local function move_tab_clamped(delta)
-	return wezterm.action_callback(function(window, pane)
-		local tabs = window:mux_window():tabs_with_info()
-		for _, info in ipairs(tabs) do
-			if info.is_active then
-				local target = info.index + delta
-				if target >= 0 and target < #tabs then
-					window:perform_action(action.MoveTab(target), pane)
-				end
-				return
-			end
-		end
-	end)
-end
-
 -- WezTerm actions for panes outside tmux.
 local tmux_emulated = {
 	-- Cmd+[ -> enter WezTerm copy mode, mirroring tmux prefix + [.
@@ -432,17 +417,17 @@ local tmux_emulated = {
 		action = action.ActivateTabRelative(-1),
 	},
 
-	-- Cmd+Shift+L -> move the active WezTerm tab one position right.
+	-- Cmd+Shift+L -> activate the next WezTerm tab (same as Cmd+L).
 	{
 		key = "l",
 		mods = "SUPER|SHIFT",
-		action = move_tab_clamped(1),
+		action = action.ActivateTabRelative(1),
 	},
-	-- Cmd+Shift+H -> move the active WezTerm tab one position left.
+	-- Cmd+Shift+H -> activate the previous WezTerm tab (same as Cmd+H).
 	{
 		key = "h",
 		mods = "SUPER|SHIFT",
-		action = move_tab_clamped(-1),
+		action = action.ActivateTabRelative(-1),
 	},
 
 	-- Cmd+G -> open lazygit in a new WezTerm tab.
@@ -543,10 +528,10 @@ local tmux_emulated = {
 		}),
 	},
 
-	-- Cmd+Shift+K -> switch to the next WezTerm workspace/session.
-	{ key = "k", mods = "SHIFT|SUPER", action = action.SwitchWorkspaceRelative(1) },
-	-- Cmd+Shift+J -> switch to the previous WezTerm workspace/session.
-	{ key = "j", mods = "SHIFT|SUPER", action = action.SwitchWorkspaceRelative(-1) },
+	-- Cmd+Shift+J -> switch to the next WezTerm workspace/session.
+	{ key = "j", mods = "SUPER|SHIFT", action = action.SwitchWorkspaceRelative(1) },
+	-- Cmd+Shift+K -> switch to the previous WezTerm workspace/session.
+	{ key = "k", mods = "SUPER|SHIFT", action = action.SwitchWorkspaceRelative(-1) },
 
 	-- Cmd+R -> open a fuzzy selector for WezTerm workspaces/sessions.
 	{
