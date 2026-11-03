@@ -47,4 +47,9 @@ external_display_watcher:setup()
 external_display_watcher:add_listener(apply_bars)
 apply_bars(external_display_watcher.last_count)
 
+--- Called by ~/.claude/agent-notify.sh through the `hs` CLI.
+function agent_alert(name, status)
+	hs.alert.show(("Agent %s is %s"):format(name, status), 4)
+end
+
 -- hs.loadSpoon("EmmyLua")
