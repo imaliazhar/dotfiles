@@ -9,7 +9,7 @@ PLUGIN_DIR="$CONFIG_DIR/plugins"
 source "$CONFIG_DIR/theme.sh"
 
 
-killall stats_provider 2>/dev/null
+pkill -f "stats_provider .*--bar $BAR_NAME\$" 2>/dev/null
 # Network speed is reported for whichever interface currently has the default route
 NETWORK_INTERFACE="$(route get default 2>/dev/null | awk '/interface:/ { print $2 }')"
 stats_provider --cpu usage --disk usage --memory ram_usage ${NETWORK_INTERFACE:+--network $NETWORK_INTERFACE} --interval 1 --bar $BAR_NAME &
@@ -25,16 +25,16 @@ stats_provider --cpu usage --disk usage --memory ram_usage ${NETWORK_INTERFACE:+
 # ln -s $(which sketchybar) $(dirname $(which sketchybar))/bottom_bar
 # ln -s ~/Dotfiles/config/sketchybar ~/Dotfiles/config/bottom_bar
 
-# The top bar follows the external display; the bottom bar is only shown when a
-# second monitor is connected. Hammerspoon re-applies this when displays change.
+# The main bar sits on the main (built-in) display; bottom_bar sits at the top of
+# the external display and is only shown when one is connected. Hammerspoon
+# re-applies this when displays change.
 DISPLAY_COUNT=$($BAR_NAME --query displays | grep -c arrangement-id)
 
 POSITION="top"
-DISPLAY_ID="$DISPLAY_COUNT"
+DISPLAY_ID=1
 HIDDEN="off"
 if [ "$BAR_NAME" = "bottom_bar" ]; then
-  POSITION="bottom"
-  DISPLAY_ID="main"
+  DISPLAY_ID="$DISPLAY_COUNT"
   [ "$DISPLAY_COUNT" -gt 1 ] || HIDDEN="on"
 fi
 
@@ -226,6 +226,19 @@ $BAR_NAME \
                        padding_left=0 padding_right=0 label.padding_right=12 \
            --add bracket datetime clock \
            --set datetime "${pill[@]}"
+
+# The external display has no notch to split around, so network joins the left
+# pills (after now playing) and stats join the right pills (left of wifi).
+if [ "$BAR_NAME" = "bottom_bar" ]; then
+  $BAR_NAME --add item net_gap left \
+            --set net_gap width=8 padding_left=0 padding_right=0 \
+            --move net_gap after media \
+            --set net_down position=left --move net_down after net_gap \
+            --set net_up position=left --move net_up after net_down \
+            --set cpu_usage position=right --move cpu_usage after wifi_gap \
+            --set ram_usage position=right --move ram_usage after cpu_usage \
+            --set disk_usage position=right --move disk_usage after ram_usage
+fi
 
 ##### Force all scripts to run the first time (never do this in a script) #####
 $BAR_NAME --update

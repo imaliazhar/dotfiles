@@ -35,11 +35,12 @@ for _, bar in ipairs({ "sketchybar", "bottom_bar" }) do
 	sh(([[killall %s 2>/dev/null; while pgrep -x %s >/dev/null; do sleep 0.1; done; nohup %s >/dev/null 2>&1 &]]):format(bar, bar, bar))
 end
 
--- The top bar follows the external display; the bottom bar is only shown when a
--- second monitor is connected. Retries so the bar daemons have time to start.
+-- The main bar sits on the main (built-in) display; bottom_bar sits at the top of
+-- the external display and is only shown when one is connected. Retries so the bar
+-- daemons have time to start.
 local function apply_bars(count)
-	sh_until_ok("sketchybar --bar display=" .. count, 10)
-	sh_until_ok("bottom_bar --bar hidden=" .. (count > 1 and "false" or "true"), 10)
+	sh_until_ok("sketchybar --bar display=1", 10)
+	sh_until_ok(("bottom_bar --bar display=%d hidden=%s"):format(count, count > 1 and "off" or "on"), 10)
 end
 
 external_display_watcher:setup()
