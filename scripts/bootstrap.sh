@@ -507,6 +507,7 @@ main() {
     rust \
     difftastic \
     dust \
+    eslint_d \
     eza \
     fd \
     felixkratz/formulae/sketchybar \
