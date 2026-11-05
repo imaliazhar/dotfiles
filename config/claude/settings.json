@@ -53,7 +53,7 @@
     "mode": "hold"
   },
   "theme": "custom:current",
-  "verbose": true,
+  "verbose": false,
   "switchModelsOnFlag": false,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
