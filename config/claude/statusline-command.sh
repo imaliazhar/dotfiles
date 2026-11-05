@@ -68,18 +68,18 @@ if [ -n "$cost" ] && [ "$(printf '%.2f' "$cost")" != "0.00" ]; then
 fi
 
 case "${email%@*}" in
-  aliazharthegreat) account="Alt" ;;
-  aliazhar.khan) account="Work" ;;
-  aliazhkh) account="Personal" ;;
+  aliazharthegreat) account="" ;;
+  aliazhar.khan) account="" ;;
+  aliazhkh) account="" ;;
   *) account="${email%@*}" ;;
 esac
-[ -n "$email" ] && account_part=$(item "$subtle" "${muted} ${subtle}${account}")
+[ -n "$email" ] && account_part=$(item "$subtle" "$account")
 [ -n "$branch" ] && branch_part=$(item "$subtle" "${muted} ${subtle}${branch}")
 
 sep='   '
 limits=$(join "$five_part" "$week_part")
 sep="   ${muted}│${reset}   "
-right=$(join "$account_part" "$branch_part")
+right=$(join "$branch_part" "$account_part")
 left=$(join "$ctx_part" "$limits" "$cost_part")
 
 visible() { printf '%b' "$1" | sed 's/\x1b\[[0-9;]*m//g' | LC_ALL=en_US.UTF-8 wc -m | tr -d ' '; }
