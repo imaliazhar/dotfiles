@@ -1,7 +1,7 @@
 #!/bin/sh
-# Claude Code hook (Stop / Notification): plays a sound and shows a Hammerspoon alert
-# "Agent <session name> is <status>". Falls back to the cwd's basename when the
-# session has no custom title.
+# Claude Code hook (Stop / Notification): shows a Hammerspoon alert
+# "Agent <session name> is <status>" and plays a sound for Notification events.
+# Falls back to the cwd's basename when the session has no custom title.
 
 input=$(cat)
 
@@ -24,6 +24,7 @@ if [ -f "$transcript" ]; then
 fi
 [ -n "$name" ] || name=$(basename "${cwd:-$PWD}")
 
-afplay /System/Library/Sounds/Glass.aiff &
+[ "$event" = "Stop" ] || afplay /System/Library/Sounds/Glass.aiff &
+
 /opt/homebrew/bin/hs -q -c 'agent_alert(_cli.args[2], _cli.args[3])' -- "$name" "$status" >/dev/null 2>&1 &
 exit 0
