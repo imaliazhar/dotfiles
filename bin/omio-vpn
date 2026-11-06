@@ -1,0 +1,88 @@
+#!/bin/zsh
+# Usage: omio-vpn up|down|status
+# Connects to the Omio VPN with openfortivpn. The VPN password is read from the
+# "Omio WiFi/VPN" 1Password item, signing in with OP_PASS from secrets.zsh.
+# status prints connected, connecting or disconnected.
+
+LOG="$HOME/.local/state/openfortivpn.log"
+# "Omio WiFi/VPN", referenced by ID because its name contains a slash
+OP_REF="op://5udxq2m66it76zvjryjqrmrq2e/yo7vl6jcgqslvrbtdilol4twd4/password"
+
+running() { pgrep -x openfortivpn >/dev/null }
+
+notify_bars() {
+  for bar in sketchybar bottom_bar; do
+    command -v $bar >/dev/null && $bar --trigger vpn_change 2>/dev/null
+  done
+}
+
+up() {
+  if running; then
+    echo "VPN is already running"
+    return 0
+  fi
+
+  source "$HOME/Dotfiles/config/zsh/secrets.zsh"
+  if [[ -z $OP_PASS ]]; then
+    echo "OP_PASS is not set in secrets.zsh" >&2
+    return 1
+  fi
+
+  local session password
+  session="$(print -r -- "$OP_PASS" | op signin --account goeuro --raw)" || return 1
+  password="$(op read --account goeuro --session "$session" "$OP_REF")" || return 1
+
+  mkdir -p "${LOG:h}"
+  print -r -- "$password" | sudo -n /opt/homebrew/bin/openfortivpn -c /etc/openfortivpn/omio.conf >"$LOG" 2>&1 &!
+  notify_bars
+
+  for i in {1..60}; do
+    sleep 0.5
+    if grep -q "Tunnel is up" "$LOG"; then
+      notify_bars
+      echo "VPN connected"
+      return 0
+    fi
+    if ! running; then
+      notify_bars
+      echo "VPN failed to connect:" >&2
+      tail -n 20 "$LOG" >&2
+      return 1
+    fi
+  done
+
+  echo "VPN is still connecting, check $LOG" >&2
+  return 1
+}
+
+down() {
+  if ! running; then
+    echo "VPN is not running"
+    return 0
+  fi
+
+  sudo -n /usr/bin/pkill -INT -x openfortivpn
+  for i in {1..20}; do
+    running || break
+    sleep 0.5
+  done
+  notify_bars
+  echo "VPN disconnected"
+}
+
+status() {
+  if ! running; then
+    echo disconnected
+  elif grep -q "Tunnel is up" "$LOG" 2>/dev/null; then
+    echo connected
+  else
+    echo connecting
+  fi
+}
+
+case "$1" in
+  up) up ;;
+  down) down ;;
+  status) status ;;
+  *) echo "Usage: omio-vpn up|down|status" >&2; exit 1 ;;
+esac

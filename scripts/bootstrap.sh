@@ -463,6 +463,24 @@ setup_touch_id_sudo() {
   printf '%s\n' "$config" | run sudo tee "$pam_file" >/dev/null
 }
 
+setup_omio_vpn() {
+  local conf="/etc/openfortivpn/omio.conf"
+  local sudoers="/etc/sudoers.d/openfortivpn"
+
+  if cmp -s "$DOTFILES/config/openfortivpn/omio.conf" "$conf" &&
+    sudo cmp -s "$DOTFILES/config/openfortivpn/sudoers" "$sudoers"; then
+    log "Omio VPN already set up"
+    return 0
+  fi
+
+  log "Setting up Omio VPN..."
+  # Root-owned copies, since sudo runs openfortivpn without a password
+  run sudo visudo -cf "$DOTFILES/config/openfortivpn/sudoers"
+  run sudo install -d -o root -g wheel -m 755 /etc/openfortivpn
+  run sudo install -o root -g wheel -m 644 "$DOTFILES/config/openfortivpn/omio.conf" "$conf"
+  run sudo install -o root -g wheel -m 440 "$DOTFILES/config/openfortivpn/sudoers" "$sudoers"
+}
+
 setup_wifi_names() {
   # macOS shows every Wi-Fi network as <redacted> on the command line unless this is
   # on. sketchybar's wifi.sh needs the name to hide itself on the home network.
@@ -527,6 +545,7 @@ main() {
     massren \
     neovim \
     node \
+    openfortivpn \
     pam-reattach \
     poppler \
     ripgrep \
@@ -543,6 +562,7 @@ main() {
   setup_touch_id_sudo
   setup_default_shell
   setup_wifi_names
+  setup_omio_vpn
 
   install_font "Victor Mono" "https://rubjo.github.io/victor-mono/VictorMonoAll.zip"
 
@@ -558,7 +578,7 @@ main() {
   install_mac_app_from_gh_releases "IINA" "https://github.com/iina/iina"
 
   # Karabiner ships a .pkg and AeroSpace has no DMG release, so use casks
-  run brew install --cask karabiner-elements nikitabobko/tap/aerospace font-hack-nerd-font
+  run brew install --cask karabiner-elements nikitabobko/tap/aerospace font-hack-nerd-font 1password-cli
 
   setup_dock
   setup_keyboard_shortcuts

@@ -219,6 +219,18 @@ $BAR_NAME \
            --add item wifi_gap right \
            --set wifi_gap width=8 padding_left=0 padding_right=0 \
            --move wifi_gap after wifi \
+           --add event vpn_change \
+           --add item vpn right \
+           --set vpn update_freq=30 script="$PLUGIN_DIR/vpn.sh" \
+                     icon.font="Hack Nerd Font:Regular:14.0" icon.padding_left=12 icon.padding_right=6 \
+                     label.padding_right=12 padding_left=0 padding_right=0 \
+           --subscribe vpn vpn_change mouse.clicked system_woke \
+           --move vpn after wifi_gap \
+           --add bracket vpn_status vpn \
+           --set vpn_status "${pill[@]}" \
+           --add item vpn_gap right \
+           --set vpn_gap width=8 padding_left=0 padding_right=0 \
+           --move vpn_gap after vpn \
            --add item clock_gap right \
            --set clock_gap width=8 padding_left=0 padding_right=0 \
            --move clock_gap after clock \
@@ -228,14 +240,14 @@ $BAR_NAME \
            --set datetime "${pill[@]}"
 
 # The external display has no notch to split around, so network joins the left
-# pills (after now playing) and stats join the right pills (left of wifi).
+# pills (after now playing) and stats join the right pills (left of the VPN).
 if [ "$BAR_NAME" = "bottom_bar" ]; then
   $BAR_NAME --add item net_gap left \
             --set net_gap width=8 padding_left=0 padding_right=0 \
             --move net_gap after media \
             --set net_down position=left --move net_down after net_gap \
             --set net_up position=left --move net_up after net_down \
-            --set cpu_usage position=right --move cpu_usage after wifi_gap \
+            --set cpu_usage position=right --move cpu_usage after vpn_gap \
             --set ram_usage position=right --move ram_usage after cpu_usage \
             --set disk_usage position=right --move disk_usage after ram_usage
 fi

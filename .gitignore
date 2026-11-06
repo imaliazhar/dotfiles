@@ -3,6 +3,7 @@ bin/*
 !bin/edit-tmux-pane-output
 !bin/editor-git
 !bin/nvr
+!bin/omio-vpn
 !bin/slack-close
 !bin/slack-open
 
@@ -25,6 +26,7 @@ config/*
 !config/karabiner/
 !config/lazygit/
 !config/nvim/
+!config/openfortivpn/
 !config/qc/
 !config/sketchybar/
 !config/theme/

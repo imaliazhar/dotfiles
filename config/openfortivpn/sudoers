@@ -1,0 +1,2 @@
+aliazhar ALL=(root) NOPASSWD: /opt/homebrew/bin/openfortivpn -c /etc/openfortivpn/omio.conf
+aliazhar ALL=(root) NOPASSWD: /usr/bin/pkill -INT -x openfortivpn
