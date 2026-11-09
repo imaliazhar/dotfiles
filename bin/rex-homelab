@@ -1,0 +1,91 @@
+#!/bin/zsh
+# Usage: rex-homelab [up|down|status]   (default: up)
+# Forwards the homelab's Rex socket to /tmp/rex-homelab.sock over SSH in the
+# background, so `rex -S homelab ...` reaches the homelab server. A Hammerspoon
+# alert shows when the tunnel drops on its own; `down` closes it without one.
+
+HOST="ssh.biakino.com"
+LOCAL_SOCK="/tmp/rex-homelab.sock"
+REMOTE_SOCK="/Users/tv/Library/Application Support/rex/server.sock"
+STATE="$HOME/.local/state/rex-homelab"
+LOG="$STATE/tunnel.log"
+STOPPING="$STATE/stopping"
+
+tunnel_pid() { pgrep -f "ssh -N .*-L $LOCAL_SOCK:" | head -n 1 }
+
+connected() { rex -S homelab --timeout 2s whoami >/dev/null 2>&1 }
+
+up() {
+  if [[ -n $(tunnel_pid) ]]; then
+    printf '%s' "unix://$LOCAL_SOCK" | pbcopy
+    echo "Tunnel is already running: unix://$LOCAL_SOCK (copied to clipboard)"
+    return 0
+  fi
+
+  if ! rex hosts list --json | jq -e '.. | objects | select(.label? == "homelab")' >/dev/null 2>&1; then
+    rex hosts add homelab "unix://$LOCAL_SOCK" || return 1
+  fi
+
+  mkdir -p "$STATE"
+  rm -f "$STOPPING"
+  (
+    ssh -N \
+      -o BatchMode=yes \
+      -o ExitOnForwardFailure=yes \
+      -o StreamLocalBindUnlink=yes \
+      -o ServerAliveInterval=30 \
+      -o ServerAliveCountMax=3 \
+      -L "$LOCAL_SOCK:$REMOTE_SOCK" \
+      "$HOST"
+    code=$?
+    rm -f "$LOCAL_SOCK"
+    if [[ ! -e $STOPPING ]]; then
+      hs -c "hs.alert.show('Rex homelab tunnel closed (exit $code)', 4)"
+    fi
+    rm -f "$STOPPING"
+  ) >"$LOG" 2>&1 </dev/null &!
+
+  for i in {1..20}; do
+    sleep 0.5
+    if connected; then
+      printf '%s' "unix://$LOCAL_SOCK" | pbcopy
+      echo "Connected: unix://$LOCAL_SOCK (copied to clipboard)"
+      return 0
+    fi
+    if [[ -z $(tunnel_pid) ]]; then
+      echo "Tunnel failed to start:" >&2
+      cat "$LOG" >&2
+      return 1
+    fi
+  done
+  echo "Tunnel is running but the homelab Rex server isn't answering" >&2
+  return 1
+}
+
+down() {
+  local pid=$(tunnel_pid)
+  if [[ -z $pid ]]; then
+    echo "Tunnel is not running"
+    return 0
+  fi
+  mkdir -p "$STATE"
+  touch "$STOPPING"
+  kill "$pid" && echo "Tunnel closed"
+}
+
+status() {
+  if [[ -z $(tunnel_pid) ]]; then
+    echo "down"
+  elif connected; then
+    echo "connected"
+  else
+    echo "tunnel up, Rex not answering"
+  fi
+}
+
+case "${1:-up}" in
+  up) up ;;
+  down) down ;;
+  status) status ;;
+  *) echo "Usage: rex-homelab [up|down|status]" >&2; exit 1 ;;
+esac

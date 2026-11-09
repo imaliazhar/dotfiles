@@ -4,6 +4,7 @@ bin/*
 !bin/editor-git
 !bin/nvr
 !bin/omio-vpn
+!bin/rex-homelab
 !bin/slack-close
 !bin/slack-open
 
@@ -28,6 +29,7 @@ config/*
 !config/nvim/
 !config/openfortivpn/
 !config/qc/
+!config/rex/
 !config/sketchybar/
 !config/theme/
 !config/tmux/
